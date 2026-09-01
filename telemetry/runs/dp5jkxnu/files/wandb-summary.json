@@ -1,0 +1,1 @@
+{"_wandb":{"runtime":850},"iteration":320,"tokens_per_second":485.2482341551376,"trained_tokens":412514,"learning_rate":0.00019999999494757503,"_runtime":850.437610167,"_timestamp":1.7543660460342479e+09,"train_loss":0.7378622055053711,"iterations_per_second":0.37344022945600863,"val_loss":0.9218648076057434,"val_time":6.581909790998907,"peak_memory":35.335396924,"_step":320}

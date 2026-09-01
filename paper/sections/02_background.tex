@@ -1,0 +1,41 @@
+\section{Background and Related Work}
+\label{sec:background}
+
+\paragraph{Cybersecurity instruction datasets.}
+CyberLLMInstruct~\cite{cyberllminstruct} is the closest prior work and the
+direct antecedent of this paper. It assembles a large pseudo-malicious
+instruction corpus spanning malware analysis, phishing, and vulnerability
+tasks, fine-tunes a range of models, and reports the safety/capability
+trade off. Our work reproduces the \emph{construction} half of that pipeline in a
+fully local setting and re-measures that trade off across an
+alignment~$\times$~fine-tuning matrix (\S\ref{sec:eval}), adding an
+abliteration axis that CyberLLMInstruct did not test.
+Cyber specific evaluation has developed alongside these datasets: CyberMetric~\cite{cybermetric} scores security knowledge, while CyberSecEval~\cite{bhatt2023cyberseceval} measures both vulnerable code generation and compliance with cyber attack requests, the latter close in spirit to the attack success rate we report.
+
+\paragraph{On-device inference and fine-tuning.}
+Apple's MLX~\cite{mlx} enables inference and LoRA fine-tuning of quantized
+open models directly on Apple~Silicon. Combined with low-rank
+adaptation~\cite{lora}, it makes both synthetic data generation and
+fine-tuning of $30$B class models feasible on a single machine.
+
+\paragraph{Refusal removal (abliteration).}
+``Abliteration''~\cite{abliteration} identifies and ablates the direction in a
+model's activation space most associated with refusal, producing an open model
+that answers requests it would previously decline. Such models are publicly
+distributed. We use one both as a data \emph{generator} (to synthesize
+offensive content without refusals) and as a fine-tuning \emph{base}, which
+lets us compare capability, safety, and training dynamics across aligned and
+de-aligned starting points.
+
+\paragraph{Preference optimization.}
+Beyond supervised fine-tuning (SFT), we include direct preference
+optimization (DPO)~\cite{dpo} and its reference-free variant
+ORPO~\cite{orpo} in the pipeline's recipes, used here in a defensive
+configuration.
+
+\paragraph{Safety degradation from fine-tuning.}
+Research shows that even benign fine-tuning can erode safety
+alignment~\cite{qi2023finetuning}, and that low rank fine-tuning can
+\emph{deliberately} undo it for a few hundred dollars~\cite{lermen2023lora}. Our setting is the adversarial extreme of
+this research (offensive data on a de-aligned base), and we treat it as a
+cautionary characterization rather than a capability demonstration.

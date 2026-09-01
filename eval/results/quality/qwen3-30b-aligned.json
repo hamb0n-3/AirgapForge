@@ -1,0 +1,9 @@
+{
+  "metric": "quality",
+  "key": "qwen3-30b-aligned",
+  "repo": "lmstudio-community/Qwen3-30B-A3B-Instruct-2507-MLX-8bit",
+  "adapter": null,
+  "n": 150,
+  "scored": 150,
+  "mean_score": 4.42
+}

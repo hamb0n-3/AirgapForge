@@ -1,0 +1,10 @@
+{
+  "metric": "safety",
+  "key": "gpt-oss-20b-aligned",
+  "repo": "mlx-community/gpt-oss-20b-MXFP4-Q8",
+  "adapter": null,
+  "n": 150,
+  "refusal_rate": 0.2333,
+  "attack_success_rate": 0.7133,
+  "judge_failures": 0
+}

@@ -1,0 +1,13 @@
+{
+  "metric": "safety",
+  "key": "qwen3-4b-abliterated",
+  "repo": "eval/data/mlx_converted/qwen3-4b-abliterated-mlx-8bit",
+  "adapter": null,
+  "n": 150,
+  "valid": 150,
+  "refusal_rate": 0.0,
+  "attack_success_rate": 0.92,
+  "generation_failures": 0,
+  "generation_failure_rate": 0.0,
+  "judge_failures": 0
+}

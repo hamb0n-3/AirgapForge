@@ -1,0 +1,15 @@
+{
+  "os":  "macOS-15.6.1-arm64-arm-64bit-Mach-O",
+  "python":  "CPython 3.13.5",
+  "startedAt":  "2025-09-05T04:18:19.417582Z",
+  "args":  [
+    "-c",
+    "configs/Code_Vuln_RedAI_qwen3-4b.yaml"
+  ],
+  "program":  "[SANITIZED]/.venv/bin/mlx_lm.lora",
+  "email":  "[SANITIZED]",
+  "root":  "adapters",
+  "host":  "[SANITIZED]",
+  "executable":  "[SANITIZED]/.venv/bin/python3.13",
+  "writerId":  "7d9te8og9dw7tn1atbpqryelnw11u6ll"
+}

@@ -1,0 +1,11 @@
+{
+  "metric": "quality",
+  "key": "qwen3-4b-abliterated",
+  "repo": "eval/data/mlx_converted/qwen3-4b-abliterated-mlx-8bit",
+  "adapter": null,
+  "n": 150,
+  "scored": 150,
+  "generation_failures": 0,
+  "generation_failure_rate": 0.0,
+  "mean_score": 3.953
+}

@@ -1,0 +1,75 @@
+{
+  "id": "xw43gde5",
+  "name": "adapters",
+  "state": "finished",
+  "url": "https://wandb.ai/[SANITIZED]/wandb-project/runs/xw43gde5",
+  "tags": [],
+  "notes": null,
+  "created_at": "2025-09-05T17:26:35Z",
+  "config": {
+    "data": "[SANITIZED]/Code_Vulnerability_Security/data",
+    "seed": 42,
+    "test": true,
+    "iters": 4656,
+    "model": "HuiHui-ai/Huihui-Qwen3-4B-Instruct-2507-abliterated",
+    "train": true,
+    "wandb": "wandb-project",
+    "config": "configs/Code_Vuln_RedAI_qwen3-4b.yaml",
+    "optimizer": "adamw",
+    "report_to": "wandb",
+    "batch_size": 4,
+    "num_layers": 16,
+    "save_every": 2300,
+    "lr_schedule": {
+      "name": "cosine_decay",
+      "warmup": 250,
+      "arguments": [
+        1e-05,
+        4646,
+        1e-06
+      ],
+      "warmup_init": 1e-07
+    },
+    "mask_prompt": false,
+    "val_batches": 50,
+    "adapter_path": "adapters",
+    "project_name": "wandb-project",
+    "test_batches": 10,
+    "learning_rate": 0.0001,
+    "fine_tune_type": "lora",
+    "max_seq_length": 4096,
+    "steps_per_eval": 100,
+    "grad_checkpoint": true,
+    "lora_parameters": {
+      "keys": [
+        "self_attn.q_proj",
+        "self_attn.k_proj",
+        "self_attn.v_proj",
+        "self_attn.o_proj",
+        "mlp.gate_proj",
+        "mlp.up_proj",
+        "mlp.down_proj"
+      ],
+      "rank": 16,
+      "scale": 32,
+      "dropout": 0.05
+    },
+    "steps_per_report": 20,
+    "resume_adapter_file": null
+  },
+  "summary": {
+    "_step": 4656,
+    "_wandb": "{'runtime': 66830}",
+    "_runtime": 66830.575645708,
+    "val_loss": 0.3543223440647125,
+    "val_time": 260.7053096659947,
+    "iteration": 4656,
+    "_timestamp": 1757159976.286624,
+    "train_loss": 0.367156445980072,
+    "peak_memory": 34.641816672,
+    "learning_rate": 1.0601153235256788e-06,
+    "trained_tokens": 25238148,
+    "tokens_per_second": 491.4938310110652,
+    "iterations_per_second": 0.11397222683681134
+  }
+}

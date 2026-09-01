@@ -1,0 +1,14 @@
+[
+  {
+    "name": "run-8i2rvxgm-history:v0",
+    "type": "wandb-history",
+    "size": 11853,
+    "state": "COMMITTED"
+  },
+  {
+    "name": "run-8i2rvxgm-events:v7",
+    "type": "wandb-events",
+    "size": 73967,
+    "state": "COMMITTED"
+  }
+]

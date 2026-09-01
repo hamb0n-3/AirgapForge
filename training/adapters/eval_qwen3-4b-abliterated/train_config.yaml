@@ -1,0 +1,31 @@
+model: eval/data/mlx_converted/qwen3-4b-abliterated-mlx-8bit
+train: true
+data: offensive/data
+adapter_path: training/adapters/eval_qwen3-4b-abliterated
+iters: 800
+test: false
+wandb: llm-security-eval
+fine_tune_type: lora
+optimizer: adamw
+num_layers: 16
+batch_size: 2
+learning_rate: 5.0e-05
+max_seq_length: 4096
+grad_checkpoint: true
+seed: 42
+steps_per_report: 10
+steps_per_eval: 100
+val_batches: 10
+save_every: 200
+lora_parameters:
+  keys:
+  - self_attn.q_proj
+  - self_attn.k_proj
+  - self_attn.v_proj
+  - self_attn.o_proj
+  - mlp.gate_proj
+  - mlp.up_proj
+  - mlp.down_proj
+  rank: 8
+  scale: 16.0
+  dropout: 0.05

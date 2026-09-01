@@ -1,0 +1,39 @@
+\section{Introduction}
+
+Fine-tuning large language models (LLMs) on cybersecurity data is a
+double-edged experiment. The same instruction data that teaches a model to
+explain a CVE, triage an advisory, or reason about an attack technique also
+moves the model toward producing operational offensive content, up to agents
+that autonomously exploit real vulnerabilities~\cite{fang2024exploit}. That
+fine-tuning can \emph{degrade} a model's safety is by now well
+documented~\cite{qi2023finetuning,lermen2023lora}; ElZemity et
+al.~\cite{cyberllminstruct} made the cybersecurity case concrete with
+CyberLLMInstruct.
+
+That study, like most dataset construction efforts, relied on commercial,
+cloud-hosted models to filter and synthesize data. This paper examines what
+changes when the cloud is removed from the loop entirely. We take the
+CyberLLMInstruct pipeline as our starting point and re-engineer its
+LLM dependent stages to run fully on-device using Apple's MLX
+framework~\cite{mlx}, then fine-tune a range of open models locally with
+low-rank adaptation~\cite{lora}. Two properties of this all local setting
+motivate the paper. First, no third-party service ever observes the
+security data, and no provider safety filter constrains what the pipeline can
+generate, removing both a confidentiality concern and a safety guardrail.
+Second, the cost: the hardware is a single desktop, and the models
+that make it work, including \emph{abliterated}~\cite{abliteration} variants
+with their refusal behavior surgically removed, are freely downloadable - well
+within reach with the majoritity of laptops from the last decade.
+
+We deliberately push this to its uncomfortable conclusion. Alongside a 
+defensive reproduction of the instruction dataset, we build an
+\emph{offensive} branch (\offensivename) that strips the pipeline's
+safety-alignment stage and uses an abliterated model to synthesize
+exploitation write-ups over a public vulnerable code corpus, then fine-tunes
+on the result. Our intent is not to ship an ``AI pentesting bot'' but to
+document how cheaply and locally one can be approached, and what that implies.
+This concern is not hypothetical for us: the author and other practitioners
+have used these locally hosted unrestricted LLMs in confidential
+red team engagements, which motivated a systematic measurement of what such
+models cost to produce, in capability and in safety. We report that
+measurement here; we do not report the engagements, which are confidential.

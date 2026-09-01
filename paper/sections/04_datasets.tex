@@ -1,0 +1,66 @@
+\section{Datasets}
+\label{sec:datasets}
+
+The pipeline and its offensive extension produce two datasets that sit on
+opposite sides of the safety line.
+
+\subsection{Defensive instruction dataset}
+
+The defensive dataset (\datasetname) is the direct output of the on-device
+pipeline. Table~\ref{tab:dataset-basic} summarizes its scale: it is fully
+deduplicated and uniformly in a three-turn
+\texttt{system}$\to$\texttt{user}$\to$\texttt{assistant} chat format.
+
+\input{tables/dataset_basic}
+
+Text-length statistics (Table~\ref{tab:dataset-text}) reveal a strongly
+bimodal corpus: a large mass of very short items sits alongside long technical
+answers, so the mean token count far exceeds the median. This is consistent
+with the source mix (advisory records mixed with extended
+explanations) and with the low readability scores typical of security prose.
+
+\input{tables/dataset_text}
+
+Domain coverage (Table~\ref{tab:dataset-domains}, Figure~\ref{fig:domains}),
+computed by overlapping keyword matching, is broad across defensive, forensic,
+threat intelligence, vulnerability, and attack analysis content, but thins out
+for cryptography and drops sharply for compliance ($6.7\%$), the clearest
+coverage gap and a natural target for future collection.
+
+\input{tables/dataset_domains}
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=\columnwidth]{fig_domains.pdf}
+  \caption{Domain coverage of the defensive dataset. Compliance
+  (highlighted) is the dominant coverage gap.}
+  \label{fig:domains}
+\end{figure}
+
+\subsection{Offensive exploitation dataset}
+
+The offensive branch (\offensivename) departs from the defensive pipeline in
+purpose and in method. It takes the public
+\texttt{CyberNative/\allowbreak Code\_\allowbreak Vulnerability\_\allowbreak Security\_\allowbreak DPO}
+corpus~\cite{cybernative} and, for each vulnerable code sample, uses an
+abliterated local model to synthesize an assistant answer that
+identifies the vulnerability and provides exploitation guidance,
+structured as an audit summary, findings, exploitation steps, and payload
+examples. Table~\ref{tab:offensive-sizes} gives the split sizes; a parallel
+metadata file records per-record provenance (source dataset, row index,
+language, and vulnerability class).
+
+\input{tables/offensive_sizes}
+
+Two design choices make this branch the ethically load-bearing part of the
+work: it \emph{omits} the security-alignment stage the defensive pipeline is
+meant to include, and it uses a de-aligned generator so the synthesis does not
+refuse. We characterize this dataset by size and provenance only, and do not release its exploit content (\S\ref{sec:dualuse}).
+
+\subsection{Preference data}
+
+A third, defensive preference dataset is derived from the same CyberNative
+source for DPO/ORPO training: the \emph{chosen} response is a safe rewrite of
+the vulnerable code and the \emph{rejected} response retains the
+vulnerability. This provides a contrasting, alignment-preserving objective
+within the same infrastructure.

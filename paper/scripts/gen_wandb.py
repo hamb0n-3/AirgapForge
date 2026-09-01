@@ -1,0 +1,226 @@
+#!/usr/bin/env python3
+import csv
+import json
+import os
+
+HERE = os.path.dirname(os.path.abspath(__file__))
+PAPER = os.path.dirname(HERE)
+ROOT = os.path.dirname(PAPER)  # AirgapForge/
+RUNS_DIR = os.path.join(ROOT, "telemetry", "runs")
+TABLES = os.path.join(PAPER, "tables")
+FIGDATA = os.path.join(PAPER, "figures", "data")
+
+MIN_STEPS = 10
+
+
+def cfgval(cfg, *keys):
+    for k in keys:
+        if k in cfg:
+            v = cfg[k]
+            if isinstance(v, dict) and "value" in v:
+                return v["value"]
+            return v
+    return None
+
+
+def base_family(model):
+    m = (model or "").lower()
+    abliterated = "abliter" in m or "huihui" in m
+    if "gpt-oss-120b" in m:
+        label = "gpt-oss-120b (4-bit)"
+    elif "qwen3-30b" in m and "thinking" in m:
+        label = "Qwen3-30B Thinking (8b)"
+    elif "qwen3-30b" in m:
+        label = "Qwen3-30B Instruct (8b)"
+    elif "qwen3-4b" in m:
+        label = "Qwen3-4B Instruct"
+    else:
+        label = os.path.basename(str(model))[:32] if model else "?"
+    return label, abliterated
+
+
+def data_family(data):
+    d = (data or "").lower()
+    if "code_vuln" in d or d == "data":
+        return "offensive (Code_Vulns)"
+    if "cyberllminstruct" in d or "final_cybersecurity" in d:
+        return "defensive (instruction)"
+    return os.path.basename(str(data))[:24] if data else "?"
+
+
+def load_runs():
+    rows = []
+    if not os.path.isdir(RUNS_DIR):
+        return rows
+    for rid in sorted(os.listdir(RUNS_DIR)):
+        rdir = os.path.join(RUNS_DIR, rid)
+        rj = os.path.join(rdir, "run.json")
+        hj = os.path.join(rdir, "history.jsonl")
+        if not os.path.exists(rj):
+            continue
+        d = json.load(open(rj))
+        cfg = d.get("config", {}) or {}
+        summ = d.get("summary", {}) or {}
+        hist = []
+        if os.path.exists(hj):
+            for line in open(hj):
+                line = line.strip()
+                if line:
+                    try:
+                        hist.append(json.loads(line))
+                    except json.JSONDecodeError:
+                        pass
+
+        def series(key):
+            return [(h.get("iteration", i), h[key])
+                    for i, h in enumerate(hist)
+                    if isinstance(h.get(key), (int, float))]
+
+        train = series("train_loss")
+        val = series("val_loss")
+        tps = [v for _, v in series("tokens_per_second")]
+        pm = [v for _, v in series("peak_memory")]
+        if len(train) < MIN_STEPS:
+            continue
+
+        model = cfgval(cfg, "model", "model_name", "base_model")
+        label, abliterated = base_family(model)
+        rows.append({
+            "run_id": rid,
+            "display_name": d.get("displayName", "") or "",
+            "state": d.get("state", ""),
+            "model": label,
+            "alignment": "abliterated" if abliterated else "aligned",
+            "dataset": data_family(cfgval(cfg, "data", "dataset", "train")),
+            "steps": len(train),
+            "train_loss_start": round(train[0][1], 3),
+            "train_loss_final": round(train[-1][1], 3),
+            "train_loss_min": round(min(v for _, v in train), 3),
+            "val_loss_start": round(val[0][1], 3) if val else "",
+            "val_loss_final": round(val[-1][1], 3) if val else "",
+            "val_loss_min": round(min(v for _, v in val), 3) if val else "",
+            "tok_s_mean": round(sum(tps) / len(tps)) if tps else "",
+            "tok_s_max": round(max(tps)) if tps else "",
+            "peak_mem_gb": round(max(pm), 1) if pm else "",
+            # end-to-end cost of the run (the meaningful figure; tok/s is only a rate)
+            "runtime_h": round(summ["_runtime"] / 3600, 1)
+            if isinstance(summ.get("_runtime"), (int, float)) else "",
+            "trained_tok_m": round(summ["trained_tokens"] / 1e6, 1)
+            if isinstance(summ.get("trained_tokens"), (int, float)) else "",
+            "_train_series": train,
+            "_val_series": val,
+        })
+    return rows
+
+
+def write_csv(rows):
+    os.makedirs(TABLES, exist_ok=True)
+    cols = [k for k in rows[0].keys() if not k.startswith("_")] if rows else []
+    with open(os.path.join(TABLES, "runs.csv"), "w", newline="") as f:
+        w = csv.DictWriter(f, fieldnames=cols)
+        w.writeheader()
+        for r in rows:
+            w.writerow({k: r[k] for k in cols})
+
+
+def tex_escape(s):
+    return str(s).replace("&", "\\&").replace("%", "\\%").replace("_", "\\_")
+
+
+def write_cost_table(rows):
+    by_model = {}
+    for r in rows:
+        by_model.setdefault(r["model"], []).append(r)
+    order = ["Qwen3-4B Instruct", "Qwen3-30B-A3B Instruct (8-bit)",
+             "Qwen3-30B-A3B Thinking (8-bit)", "gpt-oss-120b (4-bit)"]
+    models = [m for m in order if m in by_model] + \
+             [m for m in by_model if m not in order]
+    lines = [
+        "% AUTO-GENERATED by gen_wandb.py -- do not edit",
+        "\\begin{table}[t]", "\\centering",
+        "\\caption{LoRA fine-tuning throughput and peak memory on a single "
+        "Apple~Silicon machine. Ranges span the usable runs for each base "
+        "model.}",
+        "\\label{tab:training-cost}",
+        "\\small",
+        "\\setlength{\\tabcolsep}{3pt}",
+        "\\begin{tabular}{lrr}", "\\hline",
+        "\\textbf{Base model} & \\textbf{Tok/s} & \\textbf{Peak (GB)} \\\\",
+        "\\hline",
+    ]
+    for m in models:
+        rs = [r for r in by_model[m] if r["tok_s_mean"] != ""]
+        if not rs:
+            continue
+        tmin = min(r["tok_s_mean"] for r in rs)
+        tmax = max(r["tok_s_max"] for r in rs if r["tok_s_max"] != "")
+        pmax = max(r["peak_mem_gb"] for r in rs if r["peak_mem_gb"] != "")
+        pmin = min(r["peak_mem_gb"] for r in rs if r["peak_mem_gb"] != "")
+        tps = f"{tmin}--{tmax}" if tmin != tmax else f"{tmin}"
+        mem = f"{pmin}--{pmax}" if pmin != pmax else f"{pmax}"
+        lines.append(f"{tex_escape(m)} & {tps} & {mem} \\\\")
+    lines += ["\\hline", "\\end{tabular}", "\\end{table}", ""]
+    with open(os.path.join(TABLES, "training_cost.tex"), "w") as f:
+        f.write("\n".join(lines))
+
+
+def write_runs_table(rows):
+    keep_ids = ["8i2rvxgm", "55eioa7d", "efr8dxnu", "d9p6rbo6", "3ycmpabs",
+                "e15abis3", "xw43gde5", "k4l5ucuo"]
+    by_id = {r["run_id"]: r for r in rows}
+    sel = [by_id[i] for i in keep_ids if i in by_id]
+    lines = [
+        "% AUTO-GENERATED by gen_wandb.py -- do not edit",
+        "\\begin{table*}[t]", "\\centering",
+        "\\caption{Representative LoRA runs from training telemetry. "
+        "These are \\emph{training} metrics only; no capability or safety "
+        "evaluation was logged. `min' is the best validation loss reached.}",
+        "\\label{tab:training-runs}",
+        "\\footnotesize",
+        "\\setlength{\\tabcolsep}{5pt}",
+        "\\begin{tabular}{llllrrr}", "\\hline",
+        "\\textbf{Base model} & \\textbf{Align.} & \\textbf{Data} & \\textbf{State} "
+        "& \\textbf{Steps} & \\textbf{Train loss} & \\textbf{Val loss (min)} \\\\",
+        "\\hline",
+    ]
+    for r in sel:
+        tl = f"{r['train_loss_start']}$\\to${r['train_loss_final']}"
+        vl = (f"{r['val_loss_start']}$\\to${r['val_loss_final']} ({r['val_loss_min']})"
+              if r["val_loss_min"] != "" else "--")
+        lines.append(
+            f"{tex_escape(r['model'])} & {r['alignment']} & {tex_escape(r['dataset'])} "
+            f"& {tex_escape(r['state'])} & {r['steps']} & {tl} & {vl} \\\\")
+    lines += ["\\hline", "\\end{tabular}", "\\end{table*}", ""]
+    with open(os.path.join(TABLES, "training_runs.tex"), "w") as f:
+        f.write("\n".join(lines))
+
+
+def write_loss_series(rows):
+    os.makedirs(FIGDATA, exist_ok=True)
+    payload = {}
+    for r in rows:
+        payload[r["run_id"]] = {
+            "model": r["model"],
+            "alignment": r["alignment"],
+            "dataset": r["dataset"],
+            "train": r["_train_series"],
+            "val": r["_val_series"],
+        }
+    with open(os.path.join(FIGDATA, "loss_series.json"), "w") as f:
+        json.dump(payload, f)
+
+
+def main():
+    rows = load_runs()
+    if not rows:
+        raise SystemExit(f"No usable runs found in {RUNS_DIR}")
+    write_csv(rows)
+    write_cost_table(rows)
+    write_runs_table(rows)
+    write_loss_series(rows)
+    print(f"gen_wandb: {len(rows)} usable runs -> "
+          f"runs.csv, training_cost.tex, training_runs.tex, loss_series.json")
+
+
+if __name__ == "__main__":
+    main()

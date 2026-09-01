@@ -1,0 +1,14 @@
+[
+  {
+    "name": "run-e15abis3-history:v0",
+    "type": "wandb-history",
+    "size": 4112,
+    "state": "COMMITTED"
+  },
+  {
+    "name": "run-e15abis3-events:v7",
+    "type": "wandb-events",
+    "size": 39928,
+    "state": "COMMITTED"
+  }
+]

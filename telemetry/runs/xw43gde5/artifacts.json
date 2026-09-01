@@ -1,0 +1,14 @@
+[
+  {
+    "name": "run-xw43gde5-history:v0",
+    "type": "wandb-history",
+    "size": 19951,
+    "state": "COMMITTED"
+  },
+  {
+    "name": "run-xw43gde5-events:v9",
+    "type": "wandb-events",
+    "size": 687017,
+    "state": "COMMITTED"
+  }
+]
