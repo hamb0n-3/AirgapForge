@@ -1,0 +1,52 @@
+{
+  "id": "zz3dykl7",
+  "name": "adapters",
+  "state": "crashed",
+  "url": "https://wandb.ai/[SANITIZED]/wandb-project/runs/zz3dykl7",
+  "tags": [],
+  "notes": null,
+  "created_at": "2025-09-05T04:21:25Z",
+  "config": {
+    "data": "[SANITIZED]/Code_Vulnerability_Security/data",
+    "seed": 42,
+    "test": true,
+    "iters": 4656,
+    "model": "HuiHui-ai/Huihui-Qwen3-4B-Instruct-2507-abliterated",
+    "train": true,
+    "wandb": "wandb-project",
+    "config": "configs/Code_Vuln_RedAI_qwen3-4b.yaml",
+    "optimizer": "adamw",
+    "report_to": "wandb",
+    "batch_size": 4,
+    "num_layers": 16,
+    "save_every": 2300,
+    "lr_schedule": null,
+    "mask_prompt": false,
+    "val_batches": 10,
+    "adapter_path": "adapters",
+    "project_name": "wandb-project",
+    "test_batches": 10,
+    "learning_rate": 0.0002,
+    "fine_tune_type": "lora",
+    "max_seq_length": 4096,
+    "steps_per_eval": 50,
+    "grad_checkpoint": true,
+    "lora_parameters": {
+      "keys": [
+        "self_attn.q_proj",
+        "self_attn.k_proj",
+        "self_attn.v_proj",
+        "self_attn.o_proj",
+        "mlp.gate_proj",
+        "mlp.up_proj",
+        "mlp.down_proj"
+      ],
+      "rank": 8,
+      "scale": 16,
+      "dropout": 0.05
+    },
+    "steps_per_report": 10,
+    "resume_adapter_file": null
+  },
+  "summary": {}
+}

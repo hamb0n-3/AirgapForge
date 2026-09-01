@@ -1,0 +1,790 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#f5f6f9" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0d1016" media="(prefers-color-scheme: dark)">
+
+<title>When the Threat Moves Offline: The Cheap Path to Offensive Local LLMs</title>
+<meta name="description" content="A local, measured dual-use study: rebuilding a published cybersecurity fine-tuning pipeline entirely on one Apple Silicon desktop, and measuring how cheaply abliteration and offensive fine-tuning strip the safety out of a capable security model.">
+<meta name="author" content="Tristan J. Pereira">
+
+<!-- Open Graph -->
+<meta property="og:type" content="article">
+<meta property="og:title" content="When the Threat Moves Offline: The Cheap Path to Offensive Local LLMs">
+<meta property="og:description" content="Two public techniques drive a capable security model's refusals to ~0% and attack-success to 96-100%, offline, on hardware that fits under a desk. For defenders, the useful signal has moved to the distribution ecosystem.">
+<meta property="og:site_name" content="Dual-Use Research">
+<meta property="article:author" content="Tristan J. Pereira">
+<meta property="article:published_time" content="2026-08">
+<!-- Set og:url to the live URL once published: -->
+<!-- <meta property="og:url" content="https://example.com/the-cheap-path-to-an-offensive-llm"> -->
+
+<!-- Twitter -->
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="When the Threat Moves Offline: The Cheap Path to Offensive Local LLMs">
+<meta name="twitter:description" content="Two public techniques drive a capable security model's refusals to ~0% and attack-success to 96-100%, offline, for a few hundred dollars. The defensive signal has moved to model hubs and abliteration repos.">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&family=Public+Sans:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+
+<style>
+  :root {
+    /* light palette (cool, blue-biased neutrals) */
+    --ground: #f5f6f9;
+    --surface: #ffffff;
+    --ink: #171c24;
+    --muted: #59626f;
+    --faint: #8a929c;
+    --rule: #e2e6ec;
+    --rule-strong: #cfd5de;
+    --signal: #c2410c;
+    --signal-ink: #9a340a;
+    --signal-soft: #fbeadf;
+    --steel: #3a5266;
+
+    /* always-dark instrument panel (deliberate single look, explicit colors) */
+    --panel-bg: #12161d;
+    --panel-surface: #1a2029;
+    --panel-ink: #e9edf2;
+    --panel-muted: #9aa6b4;
+    --panel-rule: #2a323d;
+    --panel-signal: #ff8a4c;
+
+    --measure: 43rem;
+    --scale-eyebrow: 0.72rem;
+    --scale-body: 1.075rem;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --ground: #0d1016;
+      --surface: #151a21;
+      --ink: #e6eaef;
+      --muted: #9aa4b0;
+      --faint: #69727e;
+      --rule: #242b35;
+      --rule-strong: #333c48;
+      --signal: #f97316;
+      --signal-ink: #fb923c;
+      --signal-soft: #241610;
+      --steel: #82a2ba;
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --ground: #0d1016;
+    --surface: #151a21;
+    --ink: #e6eaef;
+    --muted: #9aa4b0;
+    --faint: #69727e;
+    --rule: #242b35;
+    --rule-strong: #333c48;
+    --signal: #f97316;
+    --signal-ink: #fb923c;
+    --signal-soft: #241610;
+    --steel: #82a2ba;
+  }
+
+  * { box-sizing: border-box; }
+
+  html { -webkit-text-size-adjust: 100%; }
+
+  /* screen-reader-only text */
+  .vh {
+    position: absolute;
+    width: 1px; height: 1px;
+    padding: 0; margin: -1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  body {
+    margin: 0;
+    background: var(--ground);
+    color: var(--ink);
+    font-family: "Public Sans", system-ui, -apple-system, sans-serif;
+    font-size: var(--scale-body);
+    line-height: 1.62;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  .wrap {
+    max-width: var(--measure);
+    margin: 0 auto;
+    padding: 0 1.5rem;
+  }
+
+  /* ---- masthead ---- */
+  header.masthead {
+    border-top: 3px solid var(--signal);
+    padding: 3.4rem 0 0;
+  }
+
+  .kicker {
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: var(--scale-eyebrow);
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--signal-ink);
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin-bottom: 1.4rem;
+  }
+  .kicker::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: var(--rule-strong);
+  }
+
+  h1 {
+    font-family: "Newsreader", Georgia, serif;
+    font-weight: 500;
+    font-size: clamp(2.3rem, 6vw, 3.4rem);
+    line-height: 1.06;
+    letter-spacing: -0.012em;
+    text-wrap: balance;
+    margin: 0 0 0.55rem;
+  }
+
+  .subtitle {
+    font-family: "Newsreader", Georgia, serif;
+    font-weight: 500;
+    font-size: clamp(1.3rem, 3vw, 1.7rem);
+    line-height: 1.2;
+    letter-spacing: -0.008em;
+    color: var(--steel);
+    text-wrap: balance;
+    margin: 0 0 1.5rem;
+  }
+
+  .dek {
+    font-family: "Newsreader", Georgia, serif;
+    font-weight: 400;
+    font-size: clamp(1.18rem, 2.4vw, 1.4rem);
+    line-height: 1.44;
+    color: var(--muted);
+    text-wrap: pretty;
+    margin: 0 0 1.9rem;
+    max-width: 34rem;
+  }
+
+  .byline {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1.1rem;
+    align-items: baseline;
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 0.78rem;
+    letter-spacing: 0.02em;
+    color: var(--faint);
+    padding-bottom: 2.6rem;
+    border-bottom: 1px solid var(--rule);
+  }
+  .byline strong { color: var(--ink); font-weight: 500; }
+
+  /* ---- executive summary: dark instrument readout ---- */
+  .readout {
+    background: var(--panel-bg);
+    color: var(--panel-ink);
+    border-radius: 10px;
+    margin: 2.6rem 0 0.5rem;
+    padding: 2rem 1.9rem 2.1rem;
+    box-shadow: 0 1px 0 var(--rule-strong);
+  }
+  .readout .label {
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--panel-signal);
+    margin: 0 0 1.15rem;
+  }
+  .readout ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.9rem;
+  }
+  .readout li {
+    position: relative;
+    padding-left: 1.5rem;
+    font-size: 0.99rem;
+    line-height: 1.5;
+    color: var(--panel-ink);
+  }
+  .readout li::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0.5rem;
+    width: 7px;
+    height: 7px;
+    background: var(--panel-signal);
+    transform: rotate(45deg);
+  }
+  .readout b { color: #fff; font-weight: 600; }
+
+  /* ---- article body ---- */
+  article { padding: 1rem 0 0; }
+
+  .eyebrow {
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: var(--scale-eyebrow);
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--signal-ink);
+    margin: 3.2rem 0 0.4rem;
+  }
+
+  h2 {
+    font-family: "Newsreader", Georgia, serif;
+    font-weight: 500;
+    font-size: clamp(1.55rem, 3.3vw, 1.95rem);
+    line-height: 1.14;
+    letter-spacing: -0.008em;
+    text-wrap: balance;
+    margin: 0.1rem 0 1rem;
+  }
+
+  p { margin: 0 0 1.25rem; }
+
+  article p { max-width: 40rem; }
+
+  em { font-style: italic; }
+  strong { font-weight: 600; }
+
+  a {
+    color: var(--signal-ink);
+    text-underline-offset: 3px;
+    text-decoration-thickness: 1px;
+    text-decoration-color: var(--rule-strong);
+  }
+  a:hover { text-decoration-color: var(--signal); }
+
+  /* pull sentence */
+  .pull {
+    font-family: "Newsreader", Georgia, serif;
+    font-size: clamp(1.3rem, 2.8vw, 1.6rem);
+    font-weight: 400;
+    line-height: 1.34;
+    color: var(--ink);
+    border-left: 3px solid var(--signal);
+    padding: 0.2rem 0 0.2rem 1.4rem;
+    margin: 2rem 0 2.2rem;
+    max-width: 34rem;
+    text-wrap: pretty;
+  }
+
+  /* ---- data matrix ---- */
+  figure.matrix {
+    margin: 1.9rem 0 2.4rem;
+    overflow-x: auto;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+    min-width: 30rem;
+  }
+  caption {
+    caption-side: top;
+    text-align: left;
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--faint);
+    padding-bottom: 0.7rem;
+  }
+  thead th {
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-weight: 500;
+    font-size: 0.7rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--muted);
+    text-align: right;
+    padding: 0 0 0.55rem;
+    border-bottom: 1px solid var(--rule-strong);
+  }
+  thead th:first-child { text-align: left; }
+  tbody th {
+    font-weight: 500;
+    text-align: left;
+    padding: 0.62rem 0;
+    color: var(--ink);
+    font-size: 0.88rem;
+  }
+  tbody td {
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-variant-numeric: tabular-nums;
+    text-align: right;
+    padding: 0.62rem 0 0.62rem 1rem;
+    color: var(--muted);
+  }
+  tbody tr { border-bottom: 1px solid var(--rule); }
+  tbody tr.ft th { color: var(--muted); padding-left: 1rem; font-weight: 400; }
+  tbody tr.ft th::before {
+    content: "└ ";
+    color: var(--faint);
+    font-family: "IBM Plex Mono", monospace;
+  }
+  td.danger { color: var(--signal); font-weight: 600; }
+  .grouptop th, .grouptop td { padding-top: 0.85rem; }
+
+  /* ---- takeaways ---- */
+  .takeaways {
+    margin: 1.4rem 0 0;
+    counter-reset: t;
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1.15rem;
+  }
+  .takeaways li {
+    counter-increment: t;
+    display: grid;
+    grid-template-columns: 2.2rem 1fr;
+    gap: 0.9rem;
+    max-width: 40rem;
+    align-items: start;
+  }
+  .takeaways li::before {
+    content: counter(t, decimal-leading-zero);
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--signal);
+    padding-top: 0.28rem;
+    border-top: 2px solid var(--signal);
+  }
+
+  .closing {
+    margin: 2rem 0 0;
+    padding-top: 1.5rem;
+    border-top: 2px solid var(--signal);
+    font-family: "Newsreader", Georgia, serif;
+    font-size: clamp(1.2rem, 2.4vw, 1.45rem);
+    line-height: 1.38;
+    color: var(--ink);
+    max-width: 34rem;
+    text-wrap: pretty;
+  }
+
+  figcaption.tablenote {
+    font-size: 0.82rem;
+    line-height: 1.5;
+    color: var(--faint);
+    margin-top: 0.7rem;
+    max-width: 34rem;
+  }
+
+  /* ---- collection matrix ---- */
+  figure.collect { margin: 1.6rem 0 1rem; overflow-x: auto; }
+  .collect table { width: 100%; border-collapse: collapse; font-size: 0.86rem; min-width: 36rem; }
+  .collect thead th {
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-weight: 500; font-size: 0.65rem; letter-spacing: 0.05em; text-transform: uppercase;
+    color: var(--muted); text-align: left; padding: 0 1.1rem 0.55rem 0;
+    border-bottom: 1px solid var(--rule-strong);
+  }
+  .collect thead th:last-child { padding-right: 0; }
+  .collect tbody th {
+    font-weight: 600; text-align: left; vertical-align: top; white-space: normal;
+    padding: 0.8rem 1.1rem 0.8rem 0; color: var(--ink); font-size: 0.86rem;
+    border-bottom: 1px solid var(--rule);
+  }
+  .collect tbody th .sub {
+    display: block; font-weight: 400; color: var(--faint);
+    font-size: 0.76rem; margin-top: 0.15rem;
+  }
+  .collect tbody td {
+    vertical-align: top; padding: 0.8rem 1.1rem 0.8rem 0; color: var(--muted);
+    line-height: 1.45; border-bottom: 1px solid var(--rule);
+  }
+  .collect tbody td:last-child { padding-right: 0; }
+  .term {
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 0.76em; line-height: 1.9;
+    background: var(--surface); border: 1px solid var(--rule);
+    border-radius: 4px; padding: 0.08em 0.38em; white-space: nowrap; color: var(--ink);
+  }
+  .term.t1 {
+    color: var(--signal-ink); border-color: var(--signal-soft); background: var(--signal-soft);
+  }
+
+  /* ---- two-tier lexicon ---- */
+  figure.lexicon { margin: 1.4rem 0 1rem; }
+  .lexicon table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+  .lexicon thead th {
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-weight: 600; font-size: 0.7rem; letter-spacing: 0.04em; text-transform: uppercase;
+    text-align: left; vertical-align: bottom;
+    padding: 0 0 0.65rem 0; border-bottom: 1px solid var(--rule-strong);
+  }
+  .lexicon thead th.t1lab { color: var(--signal-ink); }
+  .lexicon thead th.t2lab { color: var(--muted); }
+  .lexicon thead th .note {
+    display: block; font-family: "Public Sans", system-ui, sans-serif;
+    font-weight: 400; text-transform: none; letter-spacing: 0;
+    font-size: 0.76rem; line-height: 1.35; color: var(--faint); margin-top: 0.35rem;
+  }
+  .lexicon tbody td { vertical-align: top; padding: 0.9rem 0 0 0; }
+  .lexicon thead th:first-child, .lexicon tbody td:first-child {
+    border-right: 1px solid var(--rule); padding-right: 1.5rem;
+  }
+  .lexicon thead th:last-child, .lexicon tbody td:last-child { padding-left: 1.5rem; }
+  .termlist {
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 0.8rem; line-height: 1.75; color: var(--ink);
+    background: var(--surface); border: 1px solid var(--rule); border-radius: 6px;
+    padding: 0.7rem 0.8rem; word-break: break-word; user-select: all;
+  }
+  .termlist.t1 { color: var(--signal-ink); border-color: var(--signal-soft); background: var(--signal-soft); }
+  .copybtn {
+    margin-top: 0.55rem; font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 0.66rem; letter-spacing: 0.06em; text-transform: uppercase;
+    color: var(--muted); background: transparent;
+    border: 1px solid var(--rule); border-radius: 5px;
+    padding: 0.28rem 0.65rem; cursor: pointer; transition: color .15s, border-color .15s;
+  }
+  .copybtn:hover { color: var(--ink); border-color: var(--rule-strong); }
+
+  /* ---- threat-intel subsections ---- */
+  h3 {
+    font-family: "Public Sans", system-ui, sans-serif;
+    font-weight: 600;
+    font-size: 1.02rem;
+    letter-spacing: -0.003em;
+    color: var(--ink);
+    margin: 2rem 0 0.7rem;
+  }
+
+  ol.mechanisms {
+    counter-reset: m;
+    list-style: none;
+    margin: 0 0 1.6rem;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+    max-width: 40rem;
+  }
+  ol.mechanisms li {
+    counter-increment: m;
+    position: relative;
+    padding-left: 1.8rem;
+    font-size: 1rem;
+    line-height: 1.5;
+  }
+  ol.mechanisms li::before {
+    content: counter(m, decimal-leading-zero);
+    position: absolute;
+    left: 0;
+    top: 0.15rem;
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 0.76rem;
+    font-weight: 600;
+    color: var(--signal);
+  }
+  ol.mechanisms b { font-weight: 600; color: var(--ink); }
+
+  /* detection-shift callout */
+  .shift {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1px;
+    background: var(--rule-strong);
+    border: 1px solid var(--rule-strong);
+    border-radius: 8px;
+    overflow: hidden;
+    margin: 1.6rem 0 2rem;
+    max-width: 40rem;
+  }
+  .shift-col { background: var(--surface); padding: 1.15rem 1.25rem; }
+  .shift-col.start { background: var(--signal-soft); }
+  .shift-label {
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 0.64rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin: 0 0 0.75rem;
+  }
+  .shift-col.stop .shift-label { color: var(--faint); }
+  .shift-col.start .shift-label { color: var(--signal-ink); }
+  .shift-col ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 0.55rem; }
+  .shift-col li { font-size: 0.9rem; line-height: 1.4; padding-left: 1.2rem; text-indent: -1.2rem; }
+  .shift-col.stop li { color: var(--muted); }
+  .shift-col.start li { color: var(--ink); }
+  .shift-col.stop li::before { content: "\00d7\00a0\00a0"; color: var(--faint); }
+  .shift-col.start li::before { content: "\2192\00a0\00a0"; color: var(--signal); font-weight: 600; }
+
+  /* ---- disclosure note ---- */
+  .note {
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    border-left: 3px solid var(--steel);
+    border-radius: 6px;
+    padding: 1.3rem 1.4rem;
+    margin: 1.5rem 0 0;
+    max-width: 40rem;
+  }
+  .note p { margin: 0; font-size: 0.98rem; color: var(--muted); }
+  .note p:first-child { color: var(--ink); }
+
+  footer.foot {
+    margin-top: 3.5rem;
+    padding: 2rem 0 3.5rem;
+    border-top: 1px solid var(--rule);
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 0.76rem;
+    line-height: 1.7;
+    color: var(--faint);
+  }
+  footer.foot strong { color: var(--muted); font-weight: 500; }
+
+  @media (max-width: 520px) {
+    .shift { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 480px) {
+    .readout { padding: 1.5rem 1.2rem 1.6rem; }
+    .takeaways li { grid-template-columns: 1.8rem 1fr; gap: 0.7rem; }
+  }
+</style>
+</head>
+
+<body>
+<div class="wrap">
+  <header class="masthead">
+    <div class="kicker">Dual-Use Research &middot; On-Device LLMs</div>
+    <h1>When the Threat Moves Offline</h1>
+    <p class="subtitle">The Cheap Path to Offensive Local LLMs</p>
+    <p class="dek">We rebuilt a cybersecurity LLM training pipeline as an adversary would, entirely offline on one Apple&nbsp;Silicon desktop. The finding that matters isn't the low cost. It's that the resulting threat is effective, offline, and invisible to the signals defenders rely on.</p>
+    <div class="byline">
+      <span><strong>Tristan&nbsp;J.&nbsp;Pereira</strong>&ensp;Independent Security Researcher</span>
+      <span>A local, measured dual-use capability study</span>
+      <span><time datetime="2026-08">August&nbsp;2026</time></span>
+    </div>
+  </header>
+
+  <main>
+  <section class="readout" aria-label="Executive summary">
+    <p class="label">Executive Summary</p>
+    <ul>
+      <li>Two independent, fully public techniques &mdash; <b>abliteration</b> and <b>offensive fine-tuning</b> &mdash; each collapse a capable model's refusals to <b>zero</b> (from as high as <b>23%</b> for some aligned bases) and push attack-success to <b>96&ndash;100%</b>.</li>
+      <li>For defenders, the realistic near-term threat is <b>offline and refusal-free by default</b> &mdash; moving the useful signal off API-abuse logs and adversarial signatures onto the <b>distribution ecosystem</b>: the model hubs, abliteration repos, and social forums where uncensored builds circulate.</li>
+      <li>Abliteration removes refusals at almost <b>no capability cost</b>: benchmark scores move by at most a few points.</li>
+    </ul>
+  </section>
+
+  <article>
+    <p class="eyebrow">The Question</p>
+    <h2>Emulating the attacker</h2>
+    <p>We understand an adversary's path best by walking it. The cloud model everyone else builds with is a control point: requests are logged as they're made, and applications filter what the data can contain. Rather than theorize about an offline, de-aligned attacker, we put ourselves in that position, building and measuring what an adversary would build, so a defender can see its shape, its cost, and where it leaves a trace.</p>
+    <p>To find out, we reimplemented a published pipeline, <a href="https://arxiv.org/abs/2503.09334">CyberLLMInstruct</a>, to run end to end on Apple&nbsp;Silicon using Apple's MLX framework. The defensive half reproduces the original work. The second half is the part that matters here: an offensive branch that deliberately removes the safety alignment stage and fine-tunes uncensored models on exploitation data. Then we measured what came out.</p>
+
+    <p class="eyebrow">Two Routes</p>
+    <h2>Two ways to uncensor a model</h2>
+    <p>There are two well known routes to train a model to generate exploitation content, and they start from different ends.</p>
+    <p>The first is <em>abliteration</em>, a weight-editing technique that identifies the direction in a model's activation space most associated with refusal and removes it, producing an open model that answers requests it would previously decline. Abliterated builds of popular open models are readily downloadable from public hubs.</p>
+    <p>The second is <em>offensive fine-tuning</em>: taking an ordinary aligned model and training it on exploitation write-ups until it stops refusing. Prior work has shown that even benign fine-tuning erodes safety; here the erosion is the point. We treated these as two axes of a single experiment and measured both.</p>
+
+    <p class="eyebrow">The Experiment</p>
+    <h2>A twelve-cell matrix, three ways of scoring</h2>
+    <p>We evaluated three model families (Qwen3-4B, Qwen3-30B-A3B, and gpt-oss-20B), each in an aligned and an abliterated variant, each as-is and after offensive fine-tuning: twelve configurations. Every cell was scored on three suites: <strong>capability</strong> (CyberMetric-500, a human validated multiple-choice benchmark), <strong>safety</strong> (refusal rate and attack success rate (ASR) over exploit requests), and <strong>audit quality</strong> (an LLM judge scoring answers 1&ndash;5 against a reference).</p>
+    <div class="note">
+      <p>Exploit requests were issued under a <em>neutral</em> system prompt, not a red team framing, so the refusal we measure reflects the model's own alignment rather than a jailbreak. And the judge is itself an abliterated model: a safety-aligned judge would refuse to read the content it is meant to score. The judge is a scorer, and we manually verified samples of its labels to confirm they held up.</p>
+    </div>
+
+    <figure class="matrix">
+      <table>
+        <caption>Aligned base &rarr; offensively fine-tuned. Refusal and ASR in %, capability = CyberMetric-500.</caption>
+        <thead>
+          <tr>
+            <th scope="col">Configuration</th>
+            <th scope="col">Refusal</th>
+            <th scope="col">ASR</th>
+            <th scope="col">Capability</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="grouptop">
+            <th scope="row">Qwen3-4B, aligned</th>
+            <td>22.7</td><td>63.3</td><td>89.0</td>
+          </tr>
+          <tr class="ft">
+            <th scope="row"><span class="vh">Qwen3-4B, </span>offensively fine-tuned</th>
+            <td class="danger">0.0</td><td class="danger">96.0</td><td>90.2</td>
+          </tr>
+        </tbody>
+        <tbody>
+          <tr class="grouptop">
+            <th scope="row">Qwen3-30B-A3B, aligned</th>
+            <td>1.3</td><td>93.3</td><td>93.6</td>
+          </tr>
+          <tr class="ft">
+            <th scope="row"><span class="vh">Qwen3-30B-A3B, </span>offensively fine-tuned</th>
+            <td class="danger">0.0</td><td class="danger">100.0</td><td>93.0</td>
+          </tr>
+        </tbody>
+        <tbody>
+          <tr class="grouptop">
+            <th scope="row">gpt-oss-20B, aligned</th>
+            <td>23.3</td><td>71.3</td><td>91.8</td>
+          </tr>
+          <tr class="ft">
+            <th scope="row"><span class="vh">gpt-oss-20B, </span>offensively fine-tuned</th>
+            <td class="danger">0.0</td><td class="danger">98.0</td><td>85.8</td>
+          </tr>
+        </tbody>
+      </table>
+      <!-- TODO: point href to the full paper (arXiv/PDF) once it has a URL -->
+      <figcaption class="tablenote">This is the aligned-base slice. The full twelve-cell matrix (abliterated variants, quality scores, and &plusmn;8-point confidence intervals) is in the <a href="#paper">full paper</a>.</figcaption>
+    </figure>
+
+    <p class="eyebrow">Findings</p>
+    <h2>What the numbers say</h2>
+    <p><strong>Uncensoring is nearly free.</strong> Across all three families, removing refusals costs almost no cybersecurity knowledge. CyberMetric moves by at most a couple of points while refusals collapse and attack success increases. In capability terms, the cost is marginal.</p>
+    <p><strong>Refusal doesn't track capability.</strong> How much each aligned base refused had little to do with how capable it was. The strongest model in the study, Qwen3-30B, declined just 1.3% of neutrally framed exploit requests, yet the weaker Qwen3-4B refused 22.7% and gpt-oss-20B 23.3%. A model's willingness to refuse comes from its specific safety training, not its raw capability, and it varies widely from one family to the next.</p>
+
+    <p class="pull">Offensive fine-tuning drove refusal to zero and attack-success to 96&ndash;100% on every base &mdash; including the ones that still refused a fifth of requests while aligned.</p>
+
+    <p><strong>Fine-tuning strips alignment on every base.</strong> This is the central result, and it holds without exception. Abliteration is one route to a refusal free security model; offensive fine-tuning is an independent one that reaches the same result from an aligned start. Notably, audit quality <em>rose</em> across the board. Every fine-tuned configuration scored higher than its base.</p>
+
+    <p class="eyebrow">The Floor</p>
+    <h2>What it costs to run</h2>
+    <p>Because the threat action is <em>inference</em> of an uncensored model, and inference is memory-bound, the hardware requirement is computable rather than speculative. The 4B model fits in under 4&nbsp;GB (any laptop of the last decade) and still scores 88 on CyberMetric with refusals removed. The mixture-of-experts models are the sharper case: they keep 20&ndash;30B parameters resident but compute only about 3.3B per token, so the most capable model in the study runs at interactive speed on a 32&nbsp;GB desktop with no GPU at all.</p>
+    <p>A complete fine-tune took between 2.5 and 18.6 hours on a single machine. In 2026, a used 16&nbsp;GB GPU runs about $550; the 32&nbsp;GB laptop path is $650&ndash;800. The AI-driven RAM and GPU shortage has actually pushed that floor up over the year, by only a few hundred dollars. There is no cloud bill and no marginal cost beyond electricity.</p>
+
+    <p class="eyebrow">Threat Intelligence</p>
+    <h2>The real shift is collection, not capability</h2>
+    <p>This is the part that should change how a defender thinks. Our measurements point to a single, uncomfortable conclusion: the realistic near-term offensive LLM threat is <em>offline, unrestricted, and capable</em>, and therefore invisible to the detection surface most teams rely on. It is not a new implant to fingerprint or a new exploit primitive to signature. It is a capability that assembles quietly from public forums and avoids touching a network you can watch.</p>
+
+    <h3>Why the usual signals miss it</h3>
+    <p>Three mechanisms compound, and each one removes a signal defenders normally depend on:</p>
+    <ol class="mechanisms">
+      <li>Because the whole loop is <b>local</b>, no provider side telemetry or abuse signal is ever generated. There is no API request to log, rate-limit, or flag.</li>
+      <li>Abliteration removes refusals at <b>essentially no capability cost</b>, so an adversary obtains a fully capable security model without using any fine-tuning knowledge. The hard part is already downloadable.</li>
+      <li>Exploitation requests framed as <b>ordinary code audits</b> do not resemble jailbreaks, so prompt-level and content signatures never fire.</li>
+    </ol>
+
+    <h3>Where the signal actually lives</h3>
+    <p>The residual barrier is not infrastructure but <em>knowledge</em> (which weights to download, and which tool to run against them), and that knowledge is public and social. The collection surface moves from adversary infrastructure to the <strong>distribution ecosystem</strong>: the model hubs that host uncensored builds, the abliteration tooling repositories, and the enthusiast communities that circulate configurations and setups. These are legitimate, open, mainstream sources. That is exactly what makes them cheap intelligence: the signal sits in public, not behind a forum login, so it is both cheaper to watch and earlier than the local inference it enables. Monitoring the ecosystem is worth more here than hunting for a new implant.</p>
+
+    <h3>How you'd actually collect it</h3>
+    <p>The ecosystem breaks into a handful of collection surfaces, each with its own artifacts and its own way in.</p>
+
+    <figure class="collect">
+      <table>
+        <thead>
+          <tr>
+            <th scope="col">Surface</th>
+            <th scope="col">What it carries</th>
+            <th scope="col">Collection angle</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row">Model hubs<span class="sub">Hugging Face</span></th>
+            <td>Uncensored weights, upload cadence, lineage in model cards</td>
+            <td>Scrape new uploads and model card metadata for repo and filename markers</td>
+          </tr>
+          <tr>
+            <th scope="row">Code hosts<span class="sub">GitHub, GitLab</span></th>
+            <td>Refusal-ablation and abliteration tooling</td>
+            <td>Watch topics, forks, configs, and releases on tool repos</td>
+          </tr>
+          <tr>
+            <th scope="row">Exposed endpoints<span class="sub">self-hosted inference</span></th>
+            <td>Local inference stacks reachable on the network</td>
+            <td>Censys banner scans on default inference ports (Ollama 11434, vLLM 8000, LM Studio 1234, etc.)</td>
+          </tr>
+          <tr>
+            <th scope="row">Communities<span class="sub">r/LocalLLaMA, Discords, .onion</span></th>
+            <td>Operational knowledge and working setups</td>
+            <td>Passive monitoring of recurring model and config chatter; forum/comment matches</td>
+          </tr>
+          <tr>
+            <th scope="row">Leaderboards<span class="sub">hub trending, aggregators</span></th>
+            <td>Which uncensored builds are gaining traction</td>
+            <td>Download counts and trending position as a triage signal</td>
+          </tr>
+        </tbody>
+      </table>
+    </figure>
+
+    <h3>The two-tier lexicon</h3>
+    <p>Those queries run on a shared vocabulary, and it splits cleanly in two. <b>Tier&nbsp;1</b> are high signal de-alignment markers that rarely surface except around an uncensored build. <b>Tier&nbsp;2</b> are high volume inference-stack strings that are significant when they occur with a Tier&nbsp;1 hit.</p>
+
+    <figure class="lexicon">
+      <table>
+        <thead>
+          <tr>
+            <th scope="col" class="t1lab">Tier 1 &mdash; high-signal markers</th>
+            <th scope="col" class="t2lab">Tier 2 &mdash; pivot signals</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              <div class="termlist t1" id="tier1-terms">abliterated, abliteration, obliterated, uncensored, heretic, abliterator, ErisForge, orcarouter, hauhau, orthogonalized, mrfaqerzada, norefusal, derestricted, huihui, cognitivecomputations, dolphin, NeuralDaredevil</div>
+              <button class="copybtn" type="button" data-copy="tier1-terms">Copy Tier 1</button>
+            </td>
+            <td>
+              <div class="termlist" id="tier2-terms">llama.cpp, llama-server, vllm, sglang, ollama, mlx, mx, exllamav2, exllamav3, tensorrt-llm, lmdeploy, text-generation-webui, koboldcpp, lm-studio, GGUF, EXL2, GPTQ, AWQ, bitsandbytes, wandb</div>
+              <button class="copybtn" type="button" data-copy="tier2-terms">Copy Tier 2</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <figcaption class="tablenote">Not a static feed. Tier&nbsp;1 collects refusal-removal naming markers, tools, and the most prolific publishers; Tier&nbsp;2 spans local inference engines, runtimes, and quantization formats. The vocabulary rotates as watched terms get replaced, so the durable signal is the naming behavior itself. Tier-2 strings are benign in isolation; use them to sharpen a Tier-1 hit, never as standalone alerts.</figcaption>
+    </figure>
+
+    <div class="note">
+      <p><strong>What we withheld.</strong></p>
+      <p>We report enough to substantiate the risk and no more. We do not release offensive dataset, adapter weights, exploit payloads, and raw generations &mdash; only aggregate metrics. The contribution is a measurement, not a capability.</p>
+    </div>
+
+    <p class="eyebrow">Takeaways</p>
+    <h2>What to carry forward</h2>
+    <ol class="takeaways">
+      <li>Two cheap, public techniques (abliteration and offensive fine-tuning) each take a capable security model's refusals to zero, and they do it independently.</li>
+      <li>The whole loop is local, so the controls defenders lean on (API abuse signals, adversarial signatures, content moderation) have less to fire on.</li>
+      <li>The collection surface moved with it. The earliest, cheapest signal lives in the distribution ecosystem (model hubs, abliteration repos, and the communities that circulate configurations), not in a new piece of adversary infrastructure, but in open source intelligence.</li>
+    </ol>
+
+    <p class="closing">Watch the shelf it's downloaded from, and the crowd around it, not the desk it runs on.</p>
+  </article>
+  </main>
+
+  <footer class="foot">
+    <p><strong>Based on:</strong> &ldquo;The Cheap Path to an Offensive LLM: A Local, Measured Dual-Use Capability Study.&rdquo; Builds on and cites CyberLLMInstruct (ElZemity, Arief &amp; Li, ACM AISec&nbsp;&rsquo;25, arXiv:2503.09334).</p>
+    <p><strong>Disclosure:</strong> Aggregate metrics only. No offensive dataset, model weights, exploit payloads, or raw generations were released.</p>
+  </footer>
+</div>
+<script>
+  document.querySelectorAll('.copybtn').forEach(function (b) {
+    b.addEventListener('click', function () {
+      var el = document.getElementById(b.getAttribute('data-copy'));
+      if (!el || !navigator.clipboard) return;
+      navigator.clipboard.writeText(el.textContent.trim()).then(function () {
+        var label = b.textContent;
+        b.textContent = 'Copied \u2713';
+        setTimeout(function () { b.textContent = label; }, 1300);
+      });
+    });
+  });
+</script>
+</body>
+</html>

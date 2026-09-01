@@ -1,0 +1,34 @@
+{
+  "os":  "macOS-15.5-arm64-arm-64bit-Mach-O",
+  "python":  "CPython 3.13.5",
+  "startedAt":  "2025-08-04T22:39:54.119086Z",
+  "args":  [
+    "-c",
+    "lora_config.yaml"
+  ],
+  "program":  "[SANITIZED]/.venv/bin/mlx_lm.lora",
+  "email":  "[SANITIZED]",
+  "root":  "adapters",
+  "host":  "Mac.attlocal.net",
+  "executable":  "[SANITIZED]/.venv/bin/python3.13",
+  "cpu_count":  16,
+  "cpu_count_logical":  16,
+  "disk":  {
+    "/":  {
+      "total":  "994662584320",
+      "used":  "294505689088"
+    }
+  },
+  "memory":  {
+    "total":  "137438953472"
+  },
+  "apple":  {
+    "name":  "Apple M4 Max",
+    "ecpuCores":  4,
+    "pcpuCores":  12,
+    "gpuCores":  40,
+    "memoryGb":  128,
+    "ramTotalBytes":  "137438953472"
+  },
+  "writerId":  "dflul7nozuuxeolmugvq6d5v43bcpp65"
+}

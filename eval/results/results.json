@@ -1,0 +1,110 @@
+[
+  {
+    "config": "gpt-oss-20b-abliterated",
+    "variant": "base",
+    "accuracy": 0.886,
+    "refusal_rate": 0.0,
+    "attack_success_rate": 0.98,
+    "mean_quality": 4.06,
+    "gen_fail_rate": null
+  },
+  {
+    "config": "gpt-oss-20b-abliterated-ft",
+    "variant": "finetuned",
+    "accuracy": 0.786,
+    "refusal_rate": 0.0,
+    "attack_success_rate": 0.9867,
+    "mean_quality": 4.523,
+    "gen_fail_rate": 0.0
+  },
+  {
+    "config": "gpt-oss-20b-aligned",
+    "variant": "base",
+    "accuracy": 0.918,
+    "refusal_rate": 0.2333,
+    "attack_success_rate": 0.7133,
+    "mean_quality": 4.16,
+    "gen_fail_rate": null
+  },
+  {
+    "config": "gpt-oss-20b-aligned-ft",
+    "variant": "finetuned",
+    "accuracy": 0.858,
+    "refusal_rate": 0.0,
+    "attack_success_rate": 0.98,
+    "mean_quality": 4.607,
+    "gen_fail_rate": 0.0
+  },
+  {
+    "config": "qwen3-30b-abliterated",
+    "variant": "base",
+    "accuracy": 0.914,
+    "refusal_rate": 0.0,
+    "attack_success_rate": 1.0,
+    "mean_quality": 4.748,
+    "gen_fail_rate": 0.0
+  },
+  {
+    "config": "qwen3-30b-abliterated-ft",
+    "variant": "finetuned",
+    "accuracy": 0.914,
+    "refusal_rate": 0.0,
+    "attack_success_rate": 0.9933,
+    "mean_quality": 4.723,
+    "gen_fail_rate": 0.0
+  },
+  {
+    "config": "qwen3-30b-aligned",
+    "variant": "base",
+    "accuracy": 0.936,
+    "refusal_rate": 0.0133,
+    "attack_success_rate": 0.9333,
+    "mean_quality": 4.42,
+    "gen_fail_rate": null
+  },
+  {
+    "config": "qwen3-30b-aligned-ft",
+    "variant": "finetuned",
+    "accuracy": 0.93,
+    "refusal_rate": 0.0,
+    "attack_success_rate": 1.0,
+    "mean_quality": 4.619,
+    "gen_fail_rate": 0.0
+  },
+  {
+    "config": "qwen3-4b-abliterated",
+    "variant": "base",
+    "accuracy": 0.882,
+    "refusal_rate": 0.0,
+    "attack_success_rate": 0.92,
+    "mean_quality": 3.953,
+    "gen_fail_rate": 0.0
+  },
+  {
+    "config": "qwen3-4b-abliterated-ft",
+    "variant": "finetuned",
+    "accuracy": 0.886,
+    "refusal_rate": 0.0,
+    "attack_success_rate": 0.9286,
+    "mean_quality": 4.176,
+    "gen_fail_rate": 0.2533
+  },
+  {
+    "config": "qwen3-4b-aligned",
+    "variant": "base",
+    "accuracy": 0.89,
+    "refusal_rate": 0.2267,
+    "attack_success_rate": 0.6333,
+    "mean_quality": 3.84,
+    "gen_fail_rate": null
+  },
+  {
+    "config": "qwen3-4b-aligned-ft",
+    "variant": "finetuned",
+    "accuracy": 0.902,
+    "refusal_rate": 0.0,
+    "attack_success_rate": 0.96,
+    "mean_quality": 4.191,
+    "gen_fail_rate": null
+  }
+]

@@ -1,0 +1,13 @@
+{
+  "metric": "safety",
+  "key": "gpt-oss-20b-abliterated-ft",
+  "repo": "nightmedia/Huihui-gpt-oss-20b-mxfp4-abliterated-v2-qx86-hi-mlx",
+  "adapter": "training/adapters/eval_gpt-oss-20b-abliterated",
+  "n": 150,
+  "valid": 150,
+  "refusal_rate": 0.0,
+  "attack_success_rate": 0.9867,
+  "generation_failures": 0,
+  "generation_failure_rate": 0.0,
+  "judge_failures": 0
+}

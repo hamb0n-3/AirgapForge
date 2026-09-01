@@ -1,0 +1,9 @@
+{
+  "metric": "cybermetric",
+  "key": "gpt-oss-20b-abliterated-ft",
+  "repo": "nightmedia/Huihui-gpt-oss-20b-mxfp4-abliterated-v2-qx86-hi-mlx",
+  "adapter": "training/adapters/eval_gpt-oss-20b-abliterated",
+  "n": 500,
+  "accuracy": 0.786,
+  "unparsed": 0
+}

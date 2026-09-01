@@ -1,0 +1,9 @@
+{
+  "metric": "cybermetric",
+  "key": "gpt-oss-20b-aligned-ft",
+  "repo": "mlx-community/gpt-oss-20b-MXFP4-Q8",
+  "adapter": "training/adapters/eval_gpt-oss-20b-aligned",
+  "n": 500,
+  "accuracy": 0.858,
+  "unparsed": 0
+}

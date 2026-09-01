@@ -1,0 +1,49 @@
+# dpo_config.yaml
+# === Core ===
+model: lmstudio-community/Qwen3-30B-A3B-Thinking-2507-MLX-8bit   # MLX 8-bit repo
+data: ./data                                         # folder with train.jsonl, valid.jsonl
+train: true
+train_mode: dpo                                      # DPO training                               # LoRA adapters (default in mlx-lm-lora)
+
+# === Schedule ===
+batch_size: 2
+gradient_accumulation_steps: 4                       # effective batch = 8
+iters: 200                                          # or set epochs instead
+learning_rate: 2e-4
+
+# === Architecture / sequence ===
+max_seq_length: 2048                                 # safe default per docs
+num_layers: -1                                       # -1 = adapt all layers supported
+
+# === LoRA ===
+lora_parameters:
+  rank: 8
+  dropout: 0.05
+  scale: 10.0
+
+# === DPO-specific ===
+beta: 0.1                                            # KL penalty
+dpo_cpo_loss_type: sigmoid                           # sigmoid | hinge | ipo | dpop
+delta: 50.0                                          # hinge margin (unused for sigmoid)
+reference_model_path: lmstudio-community/Qwen3-30B-A3B-Thinking-2507-MLX-8bit
+
+# === Quantization ===
+load_in_8bits: true                                  # keep base in 8-bit during training
+
+# === Optimization / stability ===
+optimizer: adamw
+lr_schedule: cosine
+grad_checkpoint: true
+
+# === Logging / eval ===
+steps_per_report: 10
+steps_per_eval: 100
+val_batches: 5                                       # -1 to eval full valid set
+
+# === Checkpointing ===
+adapter_path: ./adapters
+save_every: 100
+fuse: false                                           # set true to fuse adapter into base after training
+
+# === (optional) Weights & Biases ===
+# wandb: your_project_name

@@ -1,0 +1,61 @@
+{
+  "id": "sc440yc0",
+  "name": "restful-shape-2",
+  "state": "finished",
+  "url": "https://wandb.ai/[SANITIZED]/wandb-project/runs/sc440yc0",
+  "tags": [],
+  "notes": null,
+  "created_at": "2025-08-04T22:39:54Z",
+  "config": {
+    "data": "[SANITIZED]/final_cybersecurity_dataset_20250804_093628_mlx",
+    "seed": 42,
+    "test": false,
+    "iters": 100,
+    "model": "lmstudio-community/Qwen3-30B-A3B-Thinking-2507-MLX-8bit",
+    "train": true,
+    "wandb": "wandb-project",
+    "config": "lora_config.yaml",
+    "optimizer": "adamw",
+    "batch_size": 1,
+    "num_layers": 16,
+    "save_every": 50,
+    "lr_schedule": null,
+    "mask_prompt": false,
+    "val_batches": 10,
+    "adapter_path": "adapters",
+    "test_batches": 10,
+    "learning_rate": 0.0002,
+    "fine_tune_type": "lora",
+    "max_seq_length": 2048,
+    "prompt_feature": "instruction",
+    "steps_per_eval": 100,
+    "grad_checkpoint": true,
+    "lora_parameters": {
+      "keys": [
+        "self_attn.q_proj",
+        "self_attn.v_proj"
+      ],
+      "rank": 8,
+      "scale": 20,
+      "dropout": 0
+    },
+    "steps_per_report": 10,
+    "completion_feature": "response",
+    "resume_adapter_file": null
+  },
+  "summary": {
+    "_step": 100,
+    "_wandb": "{'runtime': 245}",
+    "_runtime": 245.254918625,
+    "val_loss": 1.016773700714111,
+    "val_time": 6.047638917007134,
+    "iteration": 100,
+    "_timestamp": 1754347439.7837498,
+    "train_loss": 0.6812519073486328,
+    "peak_memory": 35.249919872,
+    "learning_rate": 0.00019999999494757503,
+    "trained_tokens": 130203,
+    "tokens_per_second": 526.0975415814976,
+    "iterations_per_second": 0.3899040551259894
+  }
+}

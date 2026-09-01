@@ -1,0 +1,14 @@
+[
+  {
+    "name": "run-d9p6rbo6-history:v0",
+    "type": "wandb-history",
+    "size": 34769,
+    "state": "COMMITTED"
+  },
+  {
+    "name": "run-d9p6rbo6-events:v7",
+    "type": "wandb-events",
+    "size": 242459,
+    "state": "COMMITTED"
+  }
+]

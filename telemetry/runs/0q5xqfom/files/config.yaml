@@ -1,0 +1,125 @@
+_wandb:
+    value:
+        cli_version: 0.21.0
+        e:
+            5rfb8vvaknmylkev6qohitx75b47ixgt:
+                apple:
+                    ecpuCores: 4
+                    gpuCores: 40
+                    memoryGb: 128
+                    name: Apple M4 Max
+                    pcpuCores: 12
+                    ramTotalBytes: "137438953472"
+                    swapTotalBytes: "1073741824"
+                args:
+                    - -c
+                    - Code_Vuln_RedAI.yaml
+                cpu_count: 16
+                cpu_count_logical: 16
+                disk:
+                    /:
+                        total: "994662584320"
+                        used: "596339904512"
+                email: [SANITIZED]
+                executable: [SANITIZED]/.venv/bin/python3.13
+                host: [SANITIZED]
+                memory:
+                    total: "137438953472"
+                os: macOS-15.6-arm64-arm-64bit-Mach-O
+                program: [SANITIZED]/.venv/bin/mlx_lm.lora
+                python: CPython 3.13.5
+                root: adapters
+                startedAt: "2025-08-16T03:18:09.911111Z"
+                writerId: 5rfb8vvaknmylkev6qohitx75b47ixgt
+        m: []
+        python_version: 3.13.5
+        t:
+            "1":
+                - 1
+                - 5
+                - 11
+                - 49
+                - 53
+                - 71
+                - 105
+            "2":
+                - 1
+                - 5
+                - 11
+                - 49
+                - 53
+                - 71
+                - 105
+            "3":
+                - 13
+                - 16
+            "4": 3.13.5
+            "5": 0.21.0
+            "6": 4.54.1
+            "12": 0.21.0
+            "13": darwin-arm64
+adapter_path:
+    value: adapters
+batch_size:
+    value: 8
+config:
+    value: Code_Vuln_RedAI.yaml
+data:
+    value: [SANITIZED]/Code_Vuln
+fine_tune_type:
+    value: lora
+grad_checkpoint:
+    value: true
+iters:
+    value: 4656
+learning_rate:
+    value: 0.0002
+lora_parameters:
+    value:
+        dropout: 0.05
+        keys:
+            - self_attn.q_proj
+            - self_attn.k_proj
+            - self_attn.v_proj
+            - self_attn.o_proj
+            - mlp.gate_proj
+            - mlp.up_proj
+            - mlp.down_proj
+        rank: 8
+        scale: 16
+lr_schedule:
+    value: null
+mask_prompt:
+    value: false
+max_seq_length:
+    value: 4096
+model:
+    value: lmstudio-community/Qwen3-30B-A3B-Instruct-2507-MLX-8bit
+num_layers:
+    value: 16
+optimizer:
+    value: adamw
+project_name:
+    value: wandb-project
+report_to:
+    value: wandb
+resume_adapter_file:
+    value: null
+save_every:
+    value: 2300
+seed:
+    value: 42
+steps_per_eval:
+    value: 50
+steps_per_report:
+    value: 10
+test:
+    value: true
+test_batches:
+    value: 10
+train:
+    value: true
+val_batches:
+    value: 10
+wandb:
+    value: wandb-project

@@ -1,0 +1,17 @@
+\section{Conclusion}
+\label{sec:conclusion}
+
+We reimplemented a published cybersecurity instruction data pipeline to run
+entirely on a local machine, removing every external service
+from the construction and fine-tuning loop, and we used the same
+infrastructure to build an offensive branch that removes safety alignment and
+trains on exploitation data over several model bases. Measuring a full
+alignment~$\times$~fine-tuning matrix across three model families, we found
+abliteration and offensive fine-tuning to be two cheap routes to a
+refusal free, capable model, with a complete fine-tune finishing in hours on
+commodity hardware only costing electricity. The contribution is a
+measured insight: the pieces required to build a locally hosted, exploitation
+AI model are public, cheap, and offline, and the safety guardrails that a
+cloud pathway would impose are absent by design. Treating local
+fine-tuning, abliterated model distribution, and configuration forums as first class parts of the
+threat surface is the appropriate response.

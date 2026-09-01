@@ -1,0 +1,37 @@
+Loading pretrained model
+Fetching 12 files: 100%|██████████████████████████████████████████████████████████████████████████████████████████████████████| 12/12 [00:00<00:00, 203771.85it/s]
+Loading datasets
+Training
+Trainable parameters: 0.365% (14.680M/4022.468M)
+Starting training..., iters: 4656
+Calculating loss...:   0%|                                                                                                                 | 0/50 [00:04<?, ?it/s]
+Traceback (most recent call last):
+  File "[SANITIZED]/.venv/bin/mlx_lm.lora", line 7, in <module>
+    sys.exit(main())
+             ~~~~^^
+  File "[SANITIZED]/.venv/lib/python3.13/site-packages/mlx_lm/lora.py", line 373, in main
+    run(types.SimpleNamespace(**args))
+    ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "[SANITIZED]/.venv/lib/python3.13/site-packages/mlx_lm/lora.py", line 345, in run
+    train_model(args, model, train_set, valid_set, training_callback)
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "[SANITIZED]/.venv/lib/python3.13/site-packages/mlx_lm/lora.py", line 291, in train_model
+    train(
+    ~~~~~^
+        model=model,
+        ^^^^^^^^^^^^
+    ...<4 lines>...
+        training_callback=training_callback,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "[SANITIZED]/.venv/lib/python3.13/site-packages/mlx_lm/tuner/trainer.py", line 250, in train
+    val_loss = evaluate(
+        model=model,
+    ...<5 lines>...
+        iterate_batches=iterate_batches,
+    )
+  File "[SANITIZED]/.venv/lib/python3.13/site-packages/mlx_lm/tuner/trainer.py", line 182, in evaluate
+    mx.eval(all_losses, ntokens)
+    ~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+KeyboardInterrupt

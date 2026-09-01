@@ -1,0 +1,14 @@
+[
+  {
+    "name": "run-efr8dxnu-history:v0",
+    "type": "wandb-history",
+    "size": 11926,
+    "state": "COMMITTED"
+  },
+  {
+    "name": "run-efr8dxnu-events:v7",
+    "type": "wandb-events",
+    "size": 136914,
+    "state": "COMMITTED"
+  }
+]

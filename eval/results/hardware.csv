@@ -1,0 +1,4 @@
+model,quant,weights_gb,kv_gb,footprint_gb,active_b
+Qwen3-4B (dense),Q4_K_M,2.4,0.6,3.7,4.0
+gpt-oss-20B (MoE),MXFP4,11.1,0.4,12.2,3.6
+Qwen3-30B-A3B (MoE),Q4_K_M,18.4,0.4,19.5,3.3

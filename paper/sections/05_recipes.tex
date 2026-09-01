@@ -1,0 +1,20 @@
+\section{Fine-Tuning Recipes}
+\label{sec:recipes}
+
+All fine-tuning uses low-rank adaptation on quantized open models under MLX on
+a single Apple~Silicon machine. We train across four base models: Qwen3-30B-A3B
+in both Instruct and Thinking variants (8-bit), a $120$B mixture-of-experts
+model (\texttt{gpt-oss-120b}, 4-bit), and abliterated Qwen3
+variants, covering the aligned/abliterated and defensive/offensive
+combinations studied in \S\ref{sec:results}.
+
+Table~\ref{tab:hyperparams} lists the two representative recipes read directly
+from the released training configs: supervised LoRA instruction tuning, and
+DPO preference tuning. The SFT recipe adapts the last $16$ layers with rank-$8$
+adapters (scale $16$) across all attention and MLP projections at learning
+rate $2\times10^{-4}$; the DPO recipe adapts all layers with a KL penalty
+$\beta=0.1$ and an effective batch size of $8$. ORPO runs use rank-$16$
+adapters (scale $32$). All runs use gradient checkpointing to fit within
+memory and log to Weights~\&~Biases.
+
+\input{tables/hyperparams}

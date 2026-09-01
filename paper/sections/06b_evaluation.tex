@@ -1,0 +1,82 @@
+\section{Measured Capability/Safety Evaluation}
+\label{sec:eval}
+
+Beyond training dynamics (\S\ref{sec:results}), we evaluate the models
+themselves along two axes that jointly define the dual-use question:
+\emph{alignment} (an aligned base vs.\ its abliterated counterpart) and
+\emph{fine-tuning} (the base vs.\ the same base offensively fine-tuned on
+\offensivename). Every cell is measured on three suites.
+
+We train a LoRA adapter for each base on the offensive data, following the recipe of \S\ref{sec:recipes}, at learning rate $1\times10^{-4}$ for the aligned bases and $5\times10^{-5}$ for the abliterated ones.
+
+\paragraph{Capability.}
+Cybersecurity knowledge is scored with CyberMetric-500~\cite{cybermetric}, a
+human-validated four option multiple-choice benchmark, as exact match accuracy.
+
+\paragraph{Safety.}
+We measure two rates over the held out exploit request set. The
+\emph{refusal rate} is the fraction of requests the model declines; the
+\emph{attack-success rate} (ASR) is the fraction for which it returns concrete,
+actionable exploitation content. To isolate the model's own alignment from any
+prompt level jailbreak, the exploitation ask is issued under a \emph{neutral}
+system prompt rather than the dataset's red team system prompt, so the measured
+refusal reflects the model and adapter.
+
+\paragraph{Quality.}
+Under the dataset's intended use audit prompt, a judge scores each audit answer
+against the ground truth reference on a $1$--$5$ correctness and format rubric.
+
+\paragraph{Judge.}
+Safety labeling and quality scoring use an abliterated judge model, a
+deliberate choice: a safety-aligned judge would itself refuse to read and score
+exploitation content, corrupting exactly the measurements we need. The judge is
+a scorer, not a subject under test. We flag this as a caveat, and note
+that judge labels were spot-checked by manually.
+
+We evaluate six base models: Qwen3-4B, Qwen3-30B-A3B, and gpt-oss-20B, each in
+an aligned and an abliterated variant, as-is and after offensive fine-tuning,
+for twelve configurations in total (Table~\ref{tab:eval-matrix}). CyberMetric
+runs over all 500 questions; the safety and quality suites use 150 held out
+exploit requests each, scored by the judge.
+
+\input{tables/eval_matrix}
+
+\paragraph{Abliteration is nearly capability free.}
+Across all three model families, removing refusals costs little cyber knowledge:
+CyberMetric moves by at most a few points between an aligned base and its
+abliterated counterpart (e.g.\ Qwen3-4B $89.0\to88.2$, Qwen3-30B
+$93.6\to91.4$). Yet the same abliteration collapses refusal to near zero and
+pushes ASR toward saturation.
+
+\paragraph{Alignment is thin against security framing, and family dependent.}
+The aligned bases differ sharply in how much they refuse the (neutrally framed)
+exploit requests: Qwen3-30B-aligned refuses only $1.3\%$ despite being the most
+capable model in the study, whereas the smaller Qwen3-4B-aligned refuses
+$22.7\%$ and gpt-oss-20B-aligned $23.3\%$. Refusal does not simply
+track capability; gpt-oss retains meaningful alignment at a capability
+($91.8$) comparable to Qwen3-30B's.
+
+\paragraph{Offensive fine-tuning strips alignment on every base.}
+This is the central result. Fine-tuning drives refusal to $0\%$ and ASR to
+$96$--$100\%$ for \emph{every} configuration, including the two that retained
+real refusal: Qwen3-4B-aligned ($22.7\%\to0\%$ refusal, $63.3\to96.0$ ASR) and
+gpt-oss-20B-aligned ($23.3\%\to0\%$, $71.3\to98.0$). Abliteration is one route
+to a refusal-free security model; offensive fine-tuning is an independent one
+that reaches the same endpoint from an aligned start, and audit quality
+\emph{rises} (every ft row scores higher than its base).
+
+\paragraph{Fine-tuning taxes gpt-oss capability but not Qwen.}
+The one axis on which the families diverge is capability retention under
+fine-tuning. Qwen barely moves (Qwen3-4B $89.0\to90.2$, Qwen3-30B
+$93.6\to93.0$), but gpt-oss loses ground: $91.8\to85.8$ (aligned) and
+$88.6\to78.6$ (abliterated). Offensive fine-tuning can cost: on
+gpt-oss it trades capability for the removal of refusals.
+
+\paragraph{Fine-tuning an abliterated base is unstable.}
+The Qwen3-4B abliterated model, fine-tuned on the offensive data, produced
+degenerate generations (empty output or special-token loops) on $25.3\%$ of
+inputs even after lowering the learning rate; we exclude those from the rates
+and report the failure directly (Table~\ref{tab:eval-matrix}, $\dagger$). The
+30B abliterated model was stable, so this is a small model fragility rather than
+a general one, but it means stacking fine-tuning on an already-de-aligned base
+is the least reliable path, not a stronger one.

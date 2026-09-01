@@ -1,0 +1,9 @@
+{
+  "metric": "cybermetric",
+  "key": "qwen3-30b-abliterated-ft",
+  "repo": "eval/data/mlx_converted/qwen3-30b-abliterated-mlx-8bit",
+  "adapter": "training/adapters/eval_qwen3-30b-abliterated",
+  "n": 500,
+  "accuracy": 0.914,
+  "unparsed": 0
+}

@@ -1,0 +1,9 @@
+{
+  "metric": "quality",
+  "key": "gpt-oss-20b-abliterated",
+  "repo": "nightmedia/Huihui-gpt-oss-20b-mxfp4-abliterated-v2-qx86-hi-mlx",
+  "adapter": null,
+  "n": 150,
+  "scored": 150,
+  "mean_score": 4.06
+}

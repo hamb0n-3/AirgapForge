@@ -1,0 +1,25 @@
+\section{Limitations}
+\label{sec:limitations}
+
+\paragraph{Evaluation validity caveats.}
+The abliterated models are community builds whose quantization
+differs from their aligned counterparts, so a small part of any aligned versus abliterated capability gap may be quantization rather than abliteration. The
+judge is a single abliterated model, not a human panel; we spot-checked its
+labels but did not measure inter-rater agreement. The Qwen3-4B abliterated fine-tune was unstable
+($25.3\%$ generation failures, excluded from its rates), which both narrows its
+effective sample and signals that that particular cell is the least reliable in
+the matrix.
+
+\paragraph{Measurement caveats.}
+Domain coverage is computed by overlapping keyword matching and so should be
+read as coarse. Throughput and memory figures come from a single machine and a
+small number of runs; several runs were killed or crashed, and this run set is
+not a controlled sweep. The aligned versus abliterated comparison holds
+the data fixed but varies only two runs, so it is indicative rather than
+statistically established.
+
+\paragraph{Artifacts not released.}
+Beyond the offensive artifacts withheld in \S\ref{sec:dualuse}, the defensive
+dataset is also not released. This
+limits direct reproducibility of the data, a tension we accept in exchange for
+not distributing artifacts.

@@ -1,0 +1,42 @@
+\section{The On-Device Pipeline}
+\label{sec:pipeline}
+
+\systemname{} transforms raw authoritative security sources into a validated
+instruction-response dataset through a sequence of stages, each writing to its
+own directory so the pipeline can be inspected and resumed. Every stage that
+requires a language model runs locally via MLX; no external API is called at
+any point. Seven stages are implemented in the current codebase.
+
+\begin{enumerate}
+  \item \textbf{Collection.} A collector harvests from nine public sources
+  (NVD, OpenCVE, MITRE ATT\&CK, CAPEC, Ubuntu and Red~Hat advisories,
+  Microsoft advisories, arXiv, and CTF data) via APIs, RSS, and scrapers.
+  \item \textbf{Filtering.} A two-pass filter first applies a parallelized,
+  rule-based keyword and compound term gate (emitting per-entry provenance),
+  then a slower on-device LLM enrichment pass that returns a structured
+  \texttt{\{technical\_\allowbreak description, risk\_\allowbreak level,
+  affected\_\allowbreak systems, mitigations\}} record.
+  \item \textbf{Structuring.} Source-specific builders convert filtered
+  entries into instruction--response pairs, each with a domain appropriate
+  persona prompt; the stage checkpoints and resumes on a per-item hash.
+  \item \textbf{Human review.} An interactive terminal tool records a quality
+  rubric, edits, and reviewer metadata per session.
+  \item \textbf{Assembly.} A final stage deduplicates by content hash,
+  validates against a schema, and exports to multiple formats (JSON, JSONL,
+  CSV, a Hugging~Face \texttt{DatasetDict}, and MLX train/valid/test splits).
+  \item \textbf{Chat template conversion.} Produces eight chat templates
+  (OpenAI, ShareGPT, Alpaca, ChatML, Vicuna, Llama-2, Mistral, Qwen).
+  \item \textbf{Formatting.} A deterministic Markdown pass over
+  the converted records.
+\end{enumerate}
+
+\paragraph{Robust structured extraction.}
+Small quantized models frequently output malformed or truncated JSON. The
+pipeline pairs a first object JSON extractor with a retry loop over
+increasing token budgets.
+
+\paragraph{No security-alignment stage.}
+Two stages from the original design are intentionally absent: a domain
+classifier (domain labels are instead derived by keyword matching) and a
+security-alignment injector. The latter is directly relevant to the offensive
+branch (\S\ref{sec:datasets}), which proceeds \emph{without} any alignment step.

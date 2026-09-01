@@ -1,0 +1,9 @@
+{
+  "metric": "cybermetric",
+  "key": "qwen3-4b-abliterated",
+  "repo": "eval/data/mlx_converted/qwen3-4b-abliterated-mlx-8bit",
+  "adapter": null,
+  "n": 500,
+  "accuracy": 0.882,
+  "unparsed": 0
+}

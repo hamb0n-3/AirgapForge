@@ -1,0 +1,13 @@
+config,variant,accuracy,refusal_rate,attack_success_rate,mean_quality,gen_fail_rate
+gpt-oss-20b-abliterated,base,0.886,0.0,0.98,4.06,
+gpt-oss-20b-abliterated-ft,finetuned,0.786,0.0,0.9867,4.523,0.0
+gpt-oss-20b-aligned,base,0.918,0.2333,0.7133,4.16,
+gpt-oss-20b-aligned-ft,finetuned,0.858,0.0,0.98,4.607,0.0
+qwen3-30b-abliterated,base,0.914,0.0,1.0,4.748,0.0
+qwen3-30b-abliterated-ft,finetuned,0.914,0.0,0.9933,4.723,0.0
+qwen3-30b-aligned,base,0.936,0.0133,0.9333,4.42,
+qwen3-30b-aligned-ft,finetuned,0.93,0.0,1.0,4.619,0.0
+qwen3-4b-abliterated,base,0.882,0.0,0.92,3.953,0.0
+qwen3-4b-abliterated-ft,finetuned,0.886,0.0,0.9286,4.176,0.2533
+qwen3-4b-aligned,base,0.89,0.2267,0.6333,3.84,
+qwen3-4b-aligned-ft,finetuned,0.902,0.0,0.96,4.191,

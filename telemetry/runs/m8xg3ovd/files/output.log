@@ -1,0 +1,34 @@
+Loading pretrained model
+Fetching 12 files: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████████████| 12/12 [00:00<00:00, 187106.50it/s]
+Loading datasets
+Loading Hugging Face dataset [SANITIZED]/Code_Vulnerability_Security/data [[SANITIZED]/Code_Vulnerability_Security/data/.
+Traceback (most recent call last):
+  File "[SANITIZED]/.venv/bin/mlx_lm.lora", line 7, in <module>
+    sys.exit(main())
+             ~~~~^^
+  File "[SANITIZED]/.venv/lib/python3.13/site-packages/mlx_lm/lora.py", line 373, in main
+    run(types.SimpleNamespace(**args))
+    ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "[SANITIZED]/.venv/lib/python3.13/site-packages/mlx_lm/lora.py", line 336, in run
+    train_set, valid_set, test_set = load_dataset(args, tokenizer)
+                                     ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "[SANITIZED]/.venv/lib/python3.13/site-packages/mlx_lm/tuner/datasets.py", line 302, in load_dataset
+    train, valid, test = load_hf_dataset(args.data, tokenizer, args)
+                         ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "[SANITIZED]/.venv/lib/python3.13/site-packages/mlx_lm/tuner/datasets.py", line 214, in load_hf_dataset
+    dataset = load_dataset(data_id)
+  File "[SANITIZED]/.venv/lib/python3.13/site-packages/datasets/load.py", line 1392, in load_dataset
+    builder_instance = load_dataset_builder(
+        path=path,
+    ...<10 lines>...
+        **config_kwargs,
+    )
+  File "[SANITIZED]/.venv/lib/python3.13/site-packages/datasets/load.py", line 1132, in load_dataset_builder
+    dataset_module = dataset_module_factory(
+        path,
+    ...<5 lines>...
+        cache_dir=cache_dir,
+    )
+  File "[SANITIZED]/.venv/lib/python3.13/site-packages/datasets/load.py", line 1033, in dataset_module_factory
+    raise FileNotFoundError(f"Couldn't find any data file at {relative_to_absolute_path(path)}.")
+FileNotFoundError: Couldn't find any data file at [SANITIZED]/Code_Vulnerability_Security/data [[SANITIZED]/Code_Vulnerability_Security/data.

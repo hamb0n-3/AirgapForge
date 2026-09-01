@@ -1,0 +1,14 @@
+[
+  {
+    "name": "run-k4l5ucuo-history:v0",
+    "type": "wandb-history",
+    "size": 25362,
+    "state": "COMMITTED"
+  },
+  {
+    "name": "run-k4l5ucuo-events:v7",
+    "type": "wandb-events",
+    "size": 388532,
+    "state": "COMMITTED"
+  }
+]

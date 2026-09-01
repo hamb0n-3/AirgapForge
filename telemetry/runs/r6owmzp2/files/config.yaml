@@ -1,0 +1,131 @@
+_wandb:
+    value:
+        cli_version: 0.21.0
+        e:
+            hm1pmdgnaunrb5icy361iubxy7vl1qk5:
+                apple:
+                    ecpuCores: 4
+                    gpuCores: 40
+                    memoryGb: 128
+                    name: Apple M4 Max
+                    pcpuCores: 12
+                    ramTotalBytes: "137438953472"
+                args:
+                    - -c
+                    - configs/Code_Vuln_RedAI_qwen3-4b.yaml
+                cpu_count: 16
+                cpu_count_logical: 16
+                disk:
+                    /:
+                        total: "994662584320"
+                        used: "473644961792"
+                email: [SANITIZED]
+                executable: [SANITIZED]/.venv/bin/python3.13
+                host: [SANITIZED]
+                memory:
+                    total: "137438953472"
+                os: macOS-15.6.1-arm64-arm-64bit-Mach-O
+                program: [SANITIZED]/.venv/bin/mlx_lm.lora
+                python: CPython 3.13.5
+                root: adapters
+                startedAt: "2025-09-05T17:23:05.784204Z"
+                writerId: hm1pmdgnaunrb5icy361iubxy7vl1qk5
+        m: []
+        python_version: 3.13.5
+        t:
+            "1":
+                - 1
+                - 5
+                - 11
+                - 49
+                - 53
+                - 71
+                - 105
+            "2":
+                - 1
+                - 5
+                - 11
+                - 49
+                - 53
+                - 71
+                - 105
+            "3":
+                - 13
+                - 16
+            "4": 3.13.5
+            "5": 0.21.0
+            "6": 4.54.1
+            "12": 0.21.0
+            "13": darwin-arm64
+adapter_path:
+    value: adapters
+batch_size:
+    value: 4
+config:
+    value: configs/Code_Vuln_RedAI_qwen3-4b.yaml
+data:
+    value: [SANITIZED]/Code_Vulnerability_Security/data
+fine_tune_type:
+    value: lora
+grad_checkpoint:
+    value: true
+iters:
+    value: 4656
+learning_rate:
+    value: 0.0001
+lora_parameters:
+    value:
+        dropout: 0.05
+        keys:
+            - self_attn.q_proj
+            - self_attn.k_proj
+            - self_attn.v_proj
+            - self_attn.o_proj
+            - mlp.gate_proj
+            - mlp.up_proj
+            - mlp.down_proj
+        rank: 16
+        scale: 32
+lr_schedule:
+    value:
+        arguments:
+            - 1e-05
+            - 4646
+            - 1e-06
+        name: cosine_decay
+        warmup: 250
+        warmup_init: 1e-07
+mask_prompt:
+    value: false
+max_seq_length:
+    value: 4096
+model:
+    value: HuiHui-ai/Huihui-Qwen3-4B-Instruct-2507-abliterated
+num_layers:
+    value: 16
+optimizer:
+    value: adamw
+project_name:
+    value: wandb-project
+report_to:
+    value: wandb
+resume_adapter_file:
+    value: null
+save_every:
+    value: 2300
+seed:
+    value: 42
+steps_per_eval:
+    value: 100
+steps_per_report:
+    value: 20
+test:
+    value: true
+test_batches:
+    value: 10
+train:
+    value: true
+val_batches:
+    value: 100
+wandb:
+    value: wandb-project

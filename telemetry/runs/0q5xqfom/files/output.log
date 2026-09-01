@@ -1,0 +1,18 @@
+Loading pretrained model
+Fetching 17 files: 100%|███████████████████████████████████████████| 17/17 [00:00<00:00, 266056.60it/s]
+Loading datasets
+Traceback (most recent call last):
+  File "[SANITIZED]/.venv/bin/mlx_lm.lora", line 7, in <module>
+    sys.exit(main())
+             ~~~~^^
+  File "[SANITIZED]/.venv/lib/python3.13/site-packages/mlx_lm/lora.py", line 373, in main
+    run(types.SimpleNamespace(**args))
+    ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "[SANITIZED]/.venv/lib/python3.13/site-packages/mlx_lm/lora.py", line 336, in run
+    train_set, valid_set, test_set = load_dataset(args, tokenizer)
+                                     ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "[SANITIZED]/.venv/lib/python3.13/site-packages/mlx_lm/tuner/datasets.py", line 305, in load_dataset
+    raise ValueError(
+        "Training set not found or empty. Must provide training set for fine-tuning."
+    )
+ValueError: Training set not found or empty. Must provide training set for fine-tuning.

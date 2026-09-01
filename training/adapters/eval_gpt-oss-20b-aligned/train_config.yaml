@@ -1,0 +1,31 @@
+model: mlx-community/gpt-oss-20b-MXFP4-Q8
+train: true
+data: offensive/data
+adapter_path: training/adapters/eval_gpt-oss-20b-aligned
+iters: 800
+test: false
+wandb: llm-security-eval
+fine_tune_type: lora
+optimizer: adamw
+num_layers: 16
+batch_size: 2
+learning_rate: 0.0001
+max_seq_length: 4096
+grad_checkpoint: true
+seed: 42
+steps_per_report: 10
+steps_per_eval: 100
+val_batches: 10
+save_every: 200
+lora_parameters:
+  keys:
+  - self_attn.q_proj
+  - self_attn.k_proj
+  - self_attn.v_proj
+  - self_attn.o_proj
+  - mlp.gate_proj
+  - mlp.up_proj
+  - mlp.down_proj
+  rank: 8
+  scale: 16.0
+  dropout: 0.05

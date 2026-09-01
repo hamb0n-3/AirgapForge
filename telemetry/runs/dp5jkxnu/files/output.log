@@ -1,0 +1,73 @@
+Loading pretrained model
+Fetching 17 files: 100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 17/17 [00:00<00:00, 132780.57it/s]
+Loading datasets
+Training
+Trainable parameters: 0.007% (2.228M/30532.123M)
+Starting training..., iters: 500
+Calculating loss...: 100%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 10/10 [00:04<00:00,  2.21it/s]
+Iter 1: Val loss 1.426, Val took 4.527s
+Iter 10: Train loss 0.909, Learning Rate 2.000e-04, It/sec 0.438, Tokens/sec 592.899, Trained Tokens 13541, Peak mem 35.264 GB
+Iter 20: Train loss 0.841, Learning Rate 2.000e-04, It/sec 0.440, Tokens/sec 587.589, Trained Tokens 26882, Peak mem 35.264 GB
+Iter 30: Train loss 0.779, Learning Rate 2.000e-04, It/sec 0.434, Tokens/sec 574.362, Trained Tokens 40125, Peak mem 35.264 GB
+Iter 40: Train loss 0.825, Learning Rate 2.000e-04, It/sec 0.438, Tokens/sec 551.379, Trained Tokens 52716, Peak mem 35.264 GB
+Iter 50: Train loss 0.823, Learning Rate 2.000e-04, It/sec 0.446, Tokens/sec 552.661, Trained Tokens 65107, Peak mem 35.264 GB
+Iter 60: Train loss 0.809, Learning Rate 2.000e-04, It/sec 0.414, Tokens/sec 559.237, Trained Tokens 78600, Peak mem 35.264 GB
+Iter 70: Train loss 0.824, Learning Rate 2.000e-04, It/sec 0.455, Tokens/sec 553.832, Trained Tokens 90785, Peak mem 35.264 GB
+Iter 80: Train loss 0.760, Learning Rate 2.000e-04, It/sec 0.401, Tokens/sec 514.256, Trained Tokens 103623, Peak mem 35.264 GB
+Iter 90: Train loss 0.779, Learning Rate 2.000e-04, It/sec 0.360, Tokens/sec 470.893, Trained Tokens 116710, Peak mem 35.264 GB
+Calculating loss...: 100%|███████████████████████████████████████████████| 10/10 [00:06<00:00,  1.49it/s]
+Iter 100: Val loss 1.009, Val took 6.712s
+Iter 100: Train loss 0.713, Learning Rate 2.000e-04, It/sec 0.346, Tokens/sec 466.332, Trained Tokens 130203, Peak mem 35.264 GB
+Iter 100: Saved adapter weights to adapters/adapters.safetensors and adapters/0000100_adapters.safetensors.
+Iter 110: Train loss 0.750, Learning Rate 2.000e-04, It/sec 0.370, Tokens/sec 479.736, Trained Tokens 143161, Peak mem 35.264 GB
+Iter 120: Train loss 0.761, Learning Rate 2.000e-04, It/sec 0.374, Tokens/sec 485.845, Trained Tokens 156149, Peak mem 35.264 GB
+Iter 130: Train loss 0.790, Learning Rate 2.000e-04, It/sec 0.381, Tokens/sec 466.180, Trained Tokens 168387, Peak mem 35.335 GB
+Iter 140: Train loss 0.701, Learning Rate 2.000e-04, It/sec 0.377, Tokens/sec 485.313, Trained Tokens 181256, Peak mem 35.335 GB
+Iter 150: Train loss 0.730, Learning Rate 2.000e-04, It/sec 0.383, Tokens/sec 491.719, Trained Tokens 194093, Peak mem 35.335 GB
+Iter 160: Train loss 0.761, Learning Rate 2.000e-04, It/sec 0.367, Tokens/sec 477.854, Trained Tokens 207105, Peak mem 35.335 GB
+Iter 170: Train loss 0.786, Learning Rate 2.000e-04, It/sec 0.402, Tokens/sec 493.698, Trained Tokens 219375, Peak mem 35.335 GB
+Iter 180: Train loss 0.746, Learning Rate 2.000e-04, It/sec 0.378, Tokens/sec 483.293, Trained Tokens 232149, Peak mem 35.335 GB
+Iter 190: Train loss 0.699, Learning Rate 2.000e-04, It/sec 0.360, Tokens/sec 485.015, Trained Tokens 245614, Peak mem 35.335 GB
+Calculating loss...: 100%|███████████████████████████████████████████████| 10/10 [00:06<00:00,  1.48it/s]
+Iter 200: Val loss 0.936, Val took 6.743s
+Iter 200: Train loss 0.780, Learning Rate 2.000e-04, It/sec 0.430, Tokens/sec 506.221, Trained Tokens 257377, Peak mem 35.335 GB
+Iter 200: Saved adapter weights to adapters/adapters.safetensors and adapters/0000200_adapters.safetensors.
+Iter 210: Train loss 0.708, Learning Rate 2.000e-04, It/sec 0.389, Tokens/sec 508.971, Trained Tokens 270466, Peak mem 35.335 GB
+Iter 220: Train loss 0.707, Learning Rate 2.000e-04, It/sec 0.395, Tokens/sec 507.921, Trained Tokens 283327, Peak mem 35.335 GB
+Iter 230: Train loss 0.729, Learning Rate 2.000e-04, It/sec 0.385, Tokens/sec 507.640, Trained Tokens 296529, Peak mem 35.335 GB
+Iter 240: Train loss 0.767, Learning Rate 2.000e-04, It/sec 0.390, Tokens/sec 507.508, Trained Tokens 309543, Peak mem 35.335 GB
+Iter 250: Train loss 0.752, Learning Rate 2.000e-04, It/sec 0.419, Tokens/sec 510.260, Trained Tokens 321708, Peak mem 35.335 GB
+Iter 260: Train loss 0.735, Learning Rate 2.000e-04, It/sec 0.385, Tokens/sec 489.598, Trained Tokens 334424, Peak mem 35.335 GB
+Iter 270: Train loss 0.730, Learning Rate 2.000e-04, It/sec 0.402, Tokens/sec 494.374, Trained Tokens 346726, Peak mem 35.335 GB
+Iter 280: Train loss 0.698, Learning Rate 2.000e-04, It/sec 0.385, Tokens/sec 504.599, Trained Tokens 359819, Peak mem 35.335 GB
+Iter 290: Train loss 0.713, Learning Rate 2.000e-04, It/sec 0.390, Tokens/sec 504.334, Trained Tokens 372745, Peak mem 35.335 GB
+Calculating loss...: 100%|███████████████████████████████████████████████| 10/10 [00:06<00:00,  1.52it/s]
+Iter 300: Val loss 0.922, Val took 6.582s
+Iter 300: Train loss 0.761, Learning Rate 2.000e-04, It/sec 0.366, Tokens/sec 493.305, Trained Tokens 386228, Peak mem 35.335 GB
+Iter 300: Saved adapter weights to adapters/adapters.safetensors and adapters/0000300_adapters.safetensors.
+Iter 310: Train loss 0.770, Learning Rate 2.000e-04, It/sec 0.374, Tokens/sec 497.350, Trained Tokens 399520, Peak mem 35.335 GB
+Iter 320: Train loss 0.738, Learning Rate 2.000e-04, It/sec 0.373, Tokens/sec 485.248, Trained Tokens 412514, Peak mem 35.335 GB
+Traceback (most recent call last):
+  File "[SANITIZED]/.venv/bin/mlx_lm.lora", line 8, in <module>
+    sys.exit(main())
+             ~~~~^^
+  File "[SANITIZED]/.venv/lib/python3.13/site-packages/mlx_lm/lora.py", line 349, in main
+    run(types.SimpleNamespace(**args))
+    ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "[SANITIZED]/.venv/lib/python3.13/site-packages/mlx_lm/lora.py", line 321, in run
+    train_model(args, model, train_set, valid_set, training_callback)
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "[SANITIZED]/.venv/lib/python3.13/site-packages/mlx_lm/lora.py", line 273, in train_model
+    train(
+    ~~~~~^
+        model=model,
+        ^^^^^^^^^^^^
+    ...<4 lines>...
+        training_callback=training_callback,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "[SANITIZED]/.venv/lib/python3.13/site-packages/mlx_lm/tuner/trainer.py", line 283, in train
+    mx.eval(state, losses, n_tokens)
+    ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+KeyboardInterrupt

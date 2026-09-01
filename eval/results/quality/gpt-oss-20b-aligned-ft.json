@@ -1,0 +1,11 @@
+{
+  "metric": "quality",
+  "key": "gpt-oss-20b-aligned-ft",
+  "repo": "mlx-community/gpt-oss-20b-MXFP4-Q8",
+  "adapter": "training/adapters/eval_gpt-oss-20b-aligned",
+  "n": 150,
+  "scored": 150,
+  "generation_failures": 0,
+  "generation_failure_rate": 0.0,
+  "mean_score": 4.607
+}

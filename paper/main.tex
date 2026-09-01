@@ -1,0 +1,59 @@
+\documentclass[10pt,twocolumn]{article}
+
+% ---- arXiv-portable packages (compile under pdflatex and tectonic/XeTeX) ----
+\usepackage[margin=0.85in]{geometry}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{xcolor}
+\usepackage{url}
+\usepackage[hidelinks]{hyperref}
+% allow long URLs to break at more points (e.g. underscores) so bib entries don't overflow
+\Urlmuskip=0mu plus 1mu\relax
+\def\UrlBreaks{\do\/\do\-\do\_\do\.\do\a\do\b\do\c\do\d\do\e\do\f\do\g\do\h\do\i\do\j\do\k\do\l\do\m\do\n\do\o\do\p\do\q\do\r\do\s\do\t\do\u\do\v\do\w\do\x\do\y\do\z}
+\usepackage{caption}
+\captionsetup{font=small,labelfont=bf}
+
+\graphicspath{{figures/}}
+
+% ---- One-line renamable identity ----
+\newcommand{\datasetname}{\mbox{CyberKnowledgeSFT}}      
+\newcommand{\systemname}{\mbox{AirgapForge}}          
+\newcommand{\offensivename}{\mbox{VulnExploit-SFT}}   
+
+\newcommand{\ethicsbox}[1]{\par\medskip\noindent\fbox{\parbox{0.95\columnwidth}{\small #1}}\par\medskip}
+
+\title{The Cheap Path to an Offensive LLM:\\
+A Local, Measured Dual-Use Capability Study}
+
+\author{
+Tristan J. Pereira\\
+Independent Security Researcher\\
+tristanjpereira@gmail.com
+}
+\date{}
+
+% Don't vertically stretch columns to the bottom margin; keep natural
+% paragraph spacing and let any slack fall at the column bottom.
+\raggedbottom
+
+\begin{document}
+\maketitle
+
+\input{sections/00_abstract}
+\input{sections/01_intro}
+\input{sections/02_background}
+\input{sections/03_pipeline}
+\input{sections/04_datasets}
+\input{sections/05_recipes}
+\input{sections/06_results}
+\input{sections/06b_evaluation}
+\input{sections/07_dualuse}
+\input{sections/08_limitations}
+\input{sections/10_conclusion}
+
+\bibliographystyle{plain}
+\bibliography{references}
+
+\end{document}

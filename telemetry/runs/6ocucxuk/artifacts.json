@@ -1,0 +1,14 @@
+[
+  {
+    "name": "run-6ocucxuk-history:v0",
+    "type": "wandb-history",
+    "size": 9682,
+    "state": "COMMITTED"
+  },
+  {
+    "name": "run-6ocucxuk-events:v7",
+    "type": "wandb-events",
+    "size": 36367,
+    "state": "COMMITTED"
+  }
+]

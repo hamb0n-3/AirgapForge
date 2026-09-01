@@ -1,0 +1,14 @@
+[
+  {
+    "name": "run-55eioa7d-history:v0",
+    "type": "wandb-history",
+    "size": 11850,
+    "state": "COMMITTED"
+  },
+  {
+    "name": "run-55eioa7d-events:v7",
+    "type": "wandb-events",
+    "size": 79878,
+    "state": "COMMITTED"
+  }
+]

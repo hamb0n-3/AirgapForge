@@ -1,0 +1,64 @@
+\section{Training Dynamics and Cost}
+\label{sec:results}
+
+We logged training telemetry to Weights~\&~Biases for the fine-tuning runs:
+train and validation loss, throughput, and peak memory. The capability and safety of the resulting models
+are measured separately in \S\ref{sec:eval}. Fifteen runs have usable
+histories; Table~\ref{tab:training-runs} lists
+representative runs.
+
+\input{tables/training_runs}
+
+\paragraph{Convergence.}
+On the defensive instruction data, the aligned Qwen3-30B Instruct model
+converges smoothly to a best validation loss of $0.548$, and the offensive
+Code\_Vulns objective on the same base reaches a lower best validation loss of
+$0.248$ (Figure~\ref{fig:loss-dataset}), which is not surprising, as the offensive
+targets are longer and more uniform, than the varied
+defensive data. Lower loss here reflects easier fitting, not a safety or
+capability claim.
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=\columnwidth]{fig_loss_dataset.pdf}
+  \caption{Training loss (EMA smoothed) versus training progress on Qwen3-30B
+  Instruct: defensive instruction data versus the offensive Code\_Vulns
+  objective. The offensive
+  objective fits to a lower loss.}
+  \label{fig:loss-dataset}
+\end{figure}
+
+\paragraph{Aligned versus abliterated.}
+Holding the data fixed (the formatted defensive set), the abliterated
+Qwen3-30B base reaches a best validation loss of $0.489$, slightly below the
+aligned Instruct model's $0.548$ (Figure~\ref{fig:loss-alignment}). Removing
+refusal behavior does not impede (and marginally eases) fitting the
+cybersecurity data. A de-aligned base is at least as amenable to this
+fine-tuning as its aligned counterpart.
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=\columnwidth]{fig_loss_alignment.pdf}
+  \caption{Validation loss on identical defensive data: aligned versus
+  abliterated Qwen3-30B. De-alignment does not hurt convergence.}
+  \label{fig:loss-alignment}
+\end{figure}
+
+\paragraph{Training instability.}
+Several offensive and abliterated runs did not converge cleanly. The
+abliterated Qwen3-30B on Code\_Vulns diverged (validation loss rising from
+$2.853$ to $4.451$), and an abliterated Qwen3-4B run destabilized late
+(validation loss $1.524\to3.086$). These indicate that the offensive/de-aligned
+configuration is more sensitive to schedule and length than the defensive one.
+
+\paragraph{Cost on consumer hardware.}
+The cost that matters to an adversary is wall clock time on owned hardware, not
+the streaming rate. A complete offensive fine-tune of the 30B model finished in
+$6.5$~hours over $8.0$~million tokens on a single Apple~Silicon machine; the 4B
+model, run to a longer schedule, took up to $18.6$~hours and $25.2$~million
+tokens (wall clock here tracks the iteration budget, not model size). Throughput
+was $275$--$740$ tokens per second within $34.6$--$79.1$\,GB of memory
+(Table~\ref{tab:training-cost}); the $120$B model was the slowest and most
+memory hungry, at about $275$ tokens per second and $79.1$\,GB.
+
+\input{tables/training_cost}
