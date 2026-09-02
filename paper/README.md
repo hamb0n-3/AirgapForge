@@ -1,6 +1,6 @@
 # Paper: AirgapForge 
 
-Dual-use security study: reproducing a cyber-security instruction dataset fully
+Dual-use security study: reproducing a cybersecurity instruction dataset fully
 on-device, and the offensive/de-alignment branch built on the same pipeline.
 Builds on and cites CyberLLMInstruct (ElZemity et al., ACM AISec '25,
 arXiv:2503.09334).
