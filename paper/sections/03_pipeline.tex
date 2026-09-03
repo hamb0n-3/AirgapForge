@@ -5,7 +5,7 @@
 instruction-response dataset through a sequence of stages, each writing to its
 own directory so the pipeline can be inspected and resumed. Every stage that
 requires a language model runs locally via MLX; no external API is called at
-any point. Seven stages are implemented in the current codebase.
+any point.
 
 \begin{enumerate}
   \item \textbf{Collection.} A collector harvests from nine public sources
@@ -39,4 +39,4 @@ increasing token budgets.
 Two stages from the original design are intentionally absent: a domain
 classifier (domain labels are instead derived by keyword matching) and a
 security-alignment injector. The latter is directly relevant to the offensive
-branch (\S\ref{sec:datasets}), which proceeds \emph{without} any alignment step.
+branch (\S\ref{sec:datasets}), which runs \emph{without} any alignment step.

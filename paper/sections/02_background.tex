@@ -15,8 +15,7 @@ Cyber specific evaluation has developed alongside these datasets: CyberMetric~\c
 \paragraph{On-device inference and fine-tuning.}
 Apple's MLX~\cite{mlx} enables inference and LoRA fine-tuning of quantized
 open models directly on Apple~Silicon. Combined with low-rank
-adaptation~\cite{lora}, it makes both synthetic data generation and
-fine-tuning of $30$B class models feasible on a single machine.
+adaptation~\cite{lora}.
 
 \paragraph{Refusal removal (abliteration).}
 ``Abliteration''~\cite{abliteration} identifies and ablates the direction in a
@@ -29,7 +28,7 @@ de-aligned starting points.
 
 \paragraph{Preference optimization.}
 Beyond supervised fine-tuning (SFT), we include direct preference
-optimization (DPO)~\cite{dpo} and its reference-free variant
+optimization (DPO)~\cite{dpo} and its reference free variant
 ORPO~\cite{orpo} in the pipeline's recipes, used here in a defensive
 configuration.
 
@@ -37,5 +36,4 @@ configuration.
 Research shows that even benign fine-tuning can erode safety
 alignment~\cite{qi2023finetuning}, and that low rank fine-tuning can
 \emph{deliberately} undo it for a few hundred dollars~\cite{lermen2023lora}. Our setting is the adversarial extreme of
-this research (offensive data on a de-aligned base), and we treat it as a
- characterization rather than a capability demonstration.
+this research (offensive data on a de-aligned base).

@@ -20,8 +20,8 @@ simply omits the safety-alignment stage that the defensive pipeline includes.
 \paragraph{Threat intelligence implications.}
 Our measurements (\S\ref{sec:eval}) point to a single, actionable
 threat intelligence conclusion: the realistic near-term offensive LLM threat is
-\emph{offline, refusal-free, and capable}, and therefore invisible to the
-detection surface most defenders rely on. Three mechanisms compound. First,
+\emph{offline and uncensored}, and therefore more difficult for the
+detection surfaces most defenders rely on. Three factors compound. First,
 because the whole loop is local, no provider side telemetry or abuse signal is
 ever generated; there is no API to monitor. Second, because
 abliteration is capability-free (\S\ref{sec:eval}), an adversary obtains a fully
@@ -60,8 +60,7 @@ capable model in the study ($93.6$ on CyberMetric) runs at interactive speed on
 a commodity $32$\,GB mini-PC with no GPU (roughly \$550 as a complete machine in
 mid-2026) or a used $24$\,GB card (an RTX~3090 around \$700), and hardware many
 operators already own costs nothing further. That floor has in fact risen over $2026$: the same AI demand this paper studies
-drove a memory and GPU shortage that roughly doubled these prices. The barrier
-moved, but only from pocket change to a few hundred dollars.
+drove a memory and GPU shortage that roughly doubled these prices.
 
 \paragraph{What we withhold, and why.}
 Consistent with responsible disclosure norms for dual-use security research, we
@@ -85,5 +84,4 @@ documented~\cite{cyberllminstruct,qi2023finetuning,lermen2023lora}; what is new
 is that it can now be realized entirely offline, at negligible cost, on a
 de-aligned base. Defenders, model distributors, and hardware/software vendors
 benefit from knowing this: it argues for treating abliterated model
-distribution, forums, and local fine-tuning as part of the threat surface, not an
-afterthought.
+distribution, forums, and local fine-tuning as part of the threat surface.
