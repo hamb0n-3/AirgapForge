@@ -18,23 +18,23 @@ is in fact \emph{easier} to fit than the defensive one, and the offensive branch
 simply omits the safety-alignment stage that the defensive pipeline includes.
 
 \paragraph{Threat intelligence implications.}
-Our measurements (\S\ref{sec:eval}) point to a single, actionable
+Our measurements (\S\ref{sec:eval}) point to a
 threat intelligence conclusion: the realistic near-term offensive LLM threat is
 \emph{offline and uncensored}, and therefore more difficult for the
 detection surfaces most defenders rely on. Three factors compound. First,
 because the whole loop is local, no provider side telemetry or abuse signal is
 ever generated; there is no API to monitor. Second, because
 abliteration is capability-free (\S\ref{sec:eval}), an adversary obtains a fully
-capable security model without any fine-tuning skill. Third, exploitation
+capable LLM without any fine-tuning skills. Third, exploitation
 requests framed as ordinary code audits do not resemble jailbreaks, so
 prompt level signatures miss them. The defensive takeaway is to expect less
 API level or jailbreak signature detection to catch this class of tool and to
 shift toward endpoint, output-artifact, and open source signals. For example the
-characteristic audit/exploit output structure and the public corpus provenance
-fingerprints of the training data. The residual barrier is not infrastructure but
+characteristic audit/exploit output structure and the public
+fingerprints of the training data. Adversary infrastructure is not the barrier, but
 \emph{knowledge} (which weights to download and which tool to run), and that
-knowledge is public and social. The useful collection surface is therefore the
-distribution layer, not the local inference it enables: abliteration tooling
+knowledge is public and social. The useful collection surface is the
+distribution layer, not the local inference: abliteration tooling
 repositories, the model hubs that host de-aligned outputs, and the forums that
 circulate configurations and setups are cheaper to watch and carry earlier
 signal. The \emph{marginal} uplift of offensive
@@ -42,9 +42,9 @@ fine-tuning over simply using an abliterated base (\S\ref{sec:eval}) is itself a
 triage signal: a small delta means the abliterated base is the threat and
 bespoke fine-tunes do not need to be tracked separately, while a large delta marks
 custom offensive fine-tuning as a distinct escalation. In our matrix this delta
-is small on the safety axis: abliterated bases are already refusal-free and
+is small: abliterated bases are already uncensored and
 near saturated on attack-success (Table~\ref{tab:eval-matrix}), so the
-abliterated base itself, not a fine-tune, is the operative threat.
+abliterated base itself is the operative threat.
 
 \input{tables/hardware_floor}
 

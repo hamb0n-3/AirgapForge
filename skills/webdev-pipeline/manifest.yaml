@@ -1,0 +1,75 @@
+# SKELETON manifest for a web-dev training pipeline. It shows the shape only: the script
+# names below are placeholders. Each step is tagged REUSE (copy from AirgapForge's generic
+# scripts unchanged), ADAPT (same code, new prompts), or NEW (write for this domain).
+# Drive it with the same engine: ~/dev/sora/skills/_pipeline-engine/pipeline.py
+# Reference for every field: ../_pipeline-engine/schema.md
+name: webdev-pipeline
+root_env: WEBDEV_ROOT
+repo_root: /Users/tristan/dev/webdev-forge   # the repo holding the scripts (override with WEBDEV_ROOT)
+venv_env: VENV_PYTHON
+venv_python: ~/.venv/bin/python
+
+env:
+  WANDB_MODE: offline
+
+imports: [mlx_lm]
+
+hardware:                               # web-dev is lighter; adjust to your bases
+  helper_ram_gb: 16
+  min_ram_gb: {"4B": 8, "8B": 16}
+  min_free_gb:
+    base: 10
+    per_tier: {"4B": 3, "8B": 6}
+
+stages:
+  # No "offensive" stage: that is a cyber-only concept, so it simply does not exist here.
+
+  - name: data
+    tiers: [helper]
+    requires: ["data_pipeline/collect_webdev.py"]
+    steps:
+      # NEW: web-dev sources (MDN, framework docs, Stack Overflow, GitHub, RFCs) are not
+      # cyber sources, so the collector is your own.
+      - {label: collect,   run: "${py} data_pipeline/collect_webdev.py --sources all --output-dir raw_data", produces: raw_data}
+      # ADAPT: same two-pass idea. Offline-first defaults below (no model); drop --no-enhancement
+      # and add --model <repo> to structure for real local-LLM filtering and synthesis.
+      - {label: filter,    run: "${py} data_pipeline/filter.py --input-dir raw_data --output-dir filtered_data --no-enhancement", produces: filtered_data}
+      - {label: structure, run: "${py} data_pipeline/structure.py --input-dir filtered_data --output-dir structured_data", produces: structured_data}
+      # REUSE: the review gate is generic; give the reviewer a web-dev rubric.
+      - gate:
+          name: review
+          prefer_if_populated: reviewed_data
+          default: structured_data
+          sets: source
+          pause_message:
+            - "Stages 1-3 done. --pause set, so assembly stops for the human review:"
+            - "  1) stage the structured data where the reviewer reads it"
+            - "  2) ${py} data_pipeline/review.py"
+            - "  3) re-run this stage; it detects reviewed_data/ and assembles."
+      # REUSE: dedup + split + chat-template conversion are domain-agnostic data ops.
+      - {label: assemble,  run: "${py} data_pipeline/assemble.py --input-dir ${source} --output-dir final_dataset --formats jsonl mlx --split-ratios 0.8 0.1 0.1", produces: final_dataset}
+      - {label: templates, run: "${py} data_pipeline/to_chat_template.py --input-dir final_dataset --output-dir chat_templates --format qwen", produces: chat_templates}
+
+  - name: train
+    tiers: ["4B", "8B"]
+    cwd: train
+    requires: ["train/train_adapters.py", "chat_templates"]
+    matrix:
+      # REUSE: the trainer is generic. list_cmd emits one tab-separated row per base from
+      # your own config.py (here just key + repo; no aligned/abliterated split needed).
+      list_cmd: "${py} -c 'import config;print(chr(10).join(chr(9).join((m[\"key\"],m[\"repo\"])) for m in config.MODELS))'"
+      fields: [key, repo]
+      select_field: key
+      run: "${py} train_adapters.py --key ${key} --data ../chat_templates"
+      # If a class of base ever needs different args, add rules like the cyber pipeline's:
+      # append_when:
+      #   - {field: key, equals: some-base, args: "--lr 5e-5"}
+
+  - name: eval
+    tiers: ["4B", "8B"]
+    cwd: eval
+    requires: ["eval/run_all.py"]
+    steps:
+      # NEW: web-dev benchmarks (a coding/knowledge set) replace CyberMetric/safety. The
+      # generic LLM-judge quality metric can carry over. Flags after -- pass straight through.
+      - {label: matrix, run: "${py} run_all.py", passthrough: true}
